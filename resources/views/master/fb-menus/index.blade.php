@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@block('title', 'Manage F&B Menu')
+@section('title', 'Manage F&B Menu')
 
 @section('content')
 <div class="page-heading">

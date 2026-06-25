@@ -74,7 +74,7 @@
                     <span class="badge bg-{{ $room->status_color }} text-wrap" style="font-size: 0.65rem; padding: 2px 4px;">{{ $room->status_text }}</span>
                   </div>
                   <p class="card-text text-muted mb-1" style="font-size: 0.75rem;">{{ $room->roomType->name }}</p>
-                  <p class="card-text mb-2 text-dark font-monospace fw-bold" style="font-size: 0.8rem;">Rp{{ number_format($room->roomType->price_per_night, 0, ',', '.') }}</p>
+                  <p class="card-text mb-2 text-body font-monospace fw-bold" style="font-size: 0.8rem;">Rp{{ number_format($room->roomType->price_per_night, 0, ',', '.') }}</p>
                 </div>
                 
                 <div class="pt-2 border-top mt-2 d-flex gap-1 justify-content-end">

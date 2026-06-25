@@ -18,30 +18,42 @@
 </div>
 
 <!-- Metrics row -->
-<section class="row g-3 mt-1">
-  <div class="col-6 col-md-3">
-    <div class="metric-card metric-success p-3 border rounded bg-white shadow-sm">
-      <span class="text-muted small d-block mb-1">Available Rooms</span>
-      <span class="h3 mb-0 text-success">{{ $roomsCount['available'] }}</span>
-    </div>
+<section class="row g-3 mt-1" aria-label="Dashboard metrics">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-success">
+      <div class="metric-top">
+        <span class="metric-label">Available Rooms</span>
+        <span class="metric-icon"><i class="bi bi-door-open" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['available'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="metric-card metric-primary p-3 border rounded bg-white shadow-sm">
-      <span class="text-muted small d-block mb-1">Occupied Rooms</span>
-      <span class="h3 mb-0 text-primary">{{ $roomsCount['occupied'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-primary">
+      <div class="metric-top">
+        <span class="metric-label">Occupied Rooms</span>
+        <span class="metric-icon"><i class="bi bi-person-fill-check" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['occupied'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="metric-card metric-info p-3 border rounded bg-white shadow-sm">
-      <span class="text-muted small d-block mb-1">Reserved Rooms</span>
-      <span class="h3 mb-0 text-info">{{ $roomsCount['reserved'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-warning">
+      <div class="metric-top">
+        <span class="metric-label">Reserved Rooms</span>
+        <span class="metric-icon"><i class="bi bi-journal-bookmark" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['reserved'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="metric-card metric-danger p-3 border rounded bg-white shadow-sm">
-      <span class="text-muted small d-block mb-1">Dirty / Cleaning</span>
-      <span class="h3 mb-0 text-danger">{{ $roomsCount['dirty'] + $roomsCount['cleaning'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-danger">
+      <div class="metric-top">
+        <span class="metric-label">Dirty & Cleaning</span>
+        <span class="metric-icon"><i class="bi bi-trash3" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['dirty'] + $roomsCount['cleaning'] }}</div>
+    </article>
   </div>
 </section>
 
@@ -72,9 +84,9 @@
                 <td>
                   @php $dep = $arr->deposits()->sum('amount'); @endphp
                   @if($dep > 0)
-                    <span class="badge bg-success">Dep: Rp{{ number_format($dep, 0, ',', '.') }}</span>
+                    <span class="badge badge-soft-success">Dep: Rp{{ number_format($dep, 0, ',', '.') }}</span>
                   @else
-                    <span class="badge bg-warning">No Deposit</span>
+                    <span class="badge badge-soft-warning">No Deposit</span>
                   @endif
                 </td>
                 <td>
@@ -161,10 +173,10 @@
                     <div>
                       <div class="d-flex justify-content-between align-items-center mb-1">
                         <h6 class="card-title mb-0 fw-bold">Room {{ $room->room_number }}</h6>
-                        <span class="badge bg-{{ $room->status_color }} text-wrap" style="font-size: 0.65rem; padding: 2px 4px;">{{ $room->status_text }}</span>
+                        <span class="badge badge-soft-{{ $room->status_color }} text-wrap" style="font-size: 0.65rem; padding: 2px 4px;">{{ $room->status_text }}</span>
                       </div>
                       <p class="card-text text-muted mb-0" style="font-size: 0.75rem;">{{ $room->roomType->name }}</p>
-                      <p class="card-text mb-2 text-dark font-monospace" style="font-size: 0.75rem;">Rp{{ number_format($room->roomType->price_per_night, 0, ',', '.') }}/N</p>
+                      <p class="card-text mb-2 text-body font-monospace" style="font-size: 0.75rem;">Rp{{ number_format($room->roomType->price_per_night, 0, ',', '.') }}/Night</p>
                     </div>
                     
                     <div class="pt-2 border-top mt-1 d-flex gap-1 justify-content-end">

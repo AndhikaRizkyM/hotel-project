@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@block('title', 'Edit Laundry Service')
+@section('title', 'Edit Laundry Service')
 
 @section('content')
 <div class="page-heading">

@@ -1,134 +1,97 @@
-# Implementation Plan - Hotel Management System
+# Redesign Dashboard UI & Layout Partials for Premium Cockpit Aesthetic
 
-This plan outlines the architecture, database schema, controllers, views, and printable forms required to implement the Hotel Management System based on the provided Product Requirement Document (PRD) and templates.
+Redesign and polish the user interfaces of the PPKD Hotel Management System (HMS), including the core layouts, dashboards, and partial views, to match the high-quality, modern design aesthetic required by the `design-taste-frontend` skill. 
+
+The focus will be on eliminating hardcoded color classes (like `bg-white`, `bg-light`, `text-dark`) that break dark mode contrast, styling high-quality soft badges, formatting details cleanly, verifying shape and typography consistency, and adding smooth micro-animations to layout elements.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Database:** We are using SQLite (`database/database.sqlite`) as it is pre-configured and runs out of the box in the Laravel environment without requiring external credentials.
-> **PDF & Printing:** For printable forms (Registration, Extra Bed, Miscellaneous, and Invoice), we will use standard CSS `@media print` styling and browser-native printing (`window.print()`). This ensures pixel-perfect rendering that matches the DOCX structures, is extremely lightweight, and allows saving directly as PDF without binary PDF engine dependencies.
-> **Roles & Authentication:** Since Laravel Breeze is not pre-installed, we will implement a clean, lightweight authentication controller system and custom middlewares matching the AdminHMD login/register forms. This provides full visual consistency without introducing complex dependencies.
-
-## Open Questions
-
-- *Do you have a preference for default login credentials for the demo?* We propose seeding:
-  - Admin: `admin@ppkdhotel.com` (password: `admin123`)
-  - Front Office: `fo@ppkdhotel.com` (password: `fo123`)
-  - Housekeeping: `hk@ppkdhotel.com` (password: `hk123`)
-  - F&B: `fb@ppkdhotel.com` (password: `fb123`)
-
----
+> The primary change is replacing default Bootstrap classes with tailored CSS styles that adapt dynamically to light/dark themes.
+> We are adding specific premium styling updates to the layout partials (`navbar`, `sidebar`, and `footer`) to enhance readability, contrast, and visual appeal.
+> No database structure or server controller logic will be changed, preserving existing functionality.
 
 ## Proposed Changes
 
-### Database & Migrations
+### Styling & Theming System
 
-We will define migrations for the following entities to support all the operational modules:
-
-#### [NEW] [migrations](file:///c:/xampp/htdocs/hotel-project/database/migrations)
-- **`create_room_types_table`**: Stores room types (Standard, Deluxe, etc.), capacity, size, price, and facility descriptions.
-- **`create_rooms_table`**: Stores room numbers, floors, room type IDs, and status (Available, Occupied, Dirty, Cleaning, Maintenance, Reserved, Blocked).
-- **`create_guests_table`**: Stores NIK/Passport, name, address, nationality, contact details, and vehicle license plates.
-- **`create_reservations_table`**: Stores reservation details, stay dates, charges, tax, service fees, and status (Reserved, Checked In, Checked Out, Cancelled, No Show).
-- **`create_deposits_table`**: Tracks deposits paid or refunded, along with payment methods (Cash, Card, QRIS, etc.).
-- **`create_guest_folios_table`** and **`create_guest_folio_items_table`**: Guest folio to track all room charges, F&B, laundry, extra beds, damages, and misc items.
-- **`create_fb_menus_table`**, **`create_fb_orders_table`**, and **`create_fb_order_items_table`**: F&B menu and room service order tracking.
-- **`create_laundry_services_table`**, **`create_laundry_orders_table`**, and **`create_laundry_order_items_table`**: Laundry request items, service types, and tracking.
-- **`create_housekeeping_tasks_table`** and **`create_room_inspections_table`**: Cleanings, inspections, and task history.
-- **`create_damage_and_lost_found_reports_table`**: Damage, lost items, and claim status.
-- **`create_maintenance_requests_table`**: Maintenance logs that set rooms to Maintenance status.
-
-#### [NEW] [DatabaseSeeder.php](file:///c:/xampp/htdocs/hotel-project/database/seeders/DatabaseSeeder.php)
-- Seed default users with their roles (Admin, FO, HK, F&B).
-- Seed Room Types (Standard, Deluxe, Superior, Studio, Suite, Connecting Room) and Room data (~15 rooms).
-- Seed F&B menu items and Laundry services.
+#### [MODIFY] [style.css](file:///c:/xampp/htdocs/hotel-project/public/template/assets/css/style.css)
+- Implement custom utility classes for **soft tinted badges** (`.badge-soft-primary`, `.badge-soft-success`, `.badge-soft-warning`, `.badge-soft-danger`, `.badge-soft-info`, `.badge-soft-secondary`) with customized border-radius and letter-spacing for premium feel.
+- Style modern scrollbars and focus rings.
+- Ensure form inputs, tables, and buttons have consistent corner radius scaling (`border-radius: 12px` or similar soft corners).
+- Provide helper panels (`.panel-soft`, `.panel-flat`) that adapt to `--admin-surface-soft` or have slight border variations instead of using hardcoded Bootstrap backgrounds.
+- Add transition animations for theme toggling and sidebar link hover states.
 
 ---
 
-### Models & Middlewares
+### Layout Partials
 
-#### [MODIFY] [User.php](file:///c:/xampp/htdocs/hotel-project/app/Models/User.php)
-- Add `role` column ('Admin', 'FO', 'HK', 'FB') and helper methods to check roles.
+#### [MODIFY] [navbar.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/layouts/partials/navbar.blade.php)
+- Clean up hardcoded `.bg-white` behavior, relying instead on `.admin-navbar`.
+- Polish user profile dropdown to render as a sleek, modern card.
+- Add visual indicators for the active theme state.
 
-#### [NEW] [Models](file:///c:/xampp/htdocs/hotel-project/app/Models)
-- `RoomType`, `Room`, `Guest`, `Reservation`, `Deposit`, `GuestFolio`, `GuestFolioItem`, `FbMenu`, `FbOrder`, `FbOrderItem`, `LaundryService`, `LaundryOrder`, `LaundryOrderItem`, `HousekeepingTask`, `RoomInspection`, `DamageReport`, `LostFoundReport`, `MaintenanceRequest`.
+#### [MODIFY] [sidebar.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/layouts/partials/sidebar.blade.php)
+- Upgrade link styling: active states should use high-contrast primary accents, and hover states should have smooth horizontal translation and scale feedback.
+- Clean up role header dividers (`Master Data`, `Front Office`, etc.) to use modern uppercase subheadings with refined letter-spacing.
+- Redesign the bottom profile badge/user widget to blend beautifully with the sidebar background.
 
-#### [NEW] [RoleMiddleware.php](file:///c:/xampp/htdocs/hotel-project/app/Http/Middleware/RoleMiddleware.php)
-- Middleware to restrict routes to specific roles (e.g., FO only, HK only, F&B only, Admin only).
-
----
-
-### Controllers
-
-#### [NEW] [Controllers](file:///c:/xampp/htdocs/hotel-project/app/Http/Controllers)
-- **`AuthController`**: Handles login, register, profile update, and logout using AdminHMD's visual design.
-- **`DashboardController`**: Renders custom statistics widgets and pending tasks tailored to each user role.
-- **`MasterDataController`**: Full CRUD for Users, Room Types, Rooms, F&B Menu, and Laundry Services (accessible by Admin).
-- **`ReservationController`**: Handles real-time room availability card layout, room filtering, booking submission, check-in, check-out, and cancellation/no-show.
-- **`DepositController`**: Receives, refunds, and logs guest deposits.
-- **`FolioController`**: Lists guest folio statements, adds manual charges/adjustments.
-- **`FbController`**: F&B dashboard, room service ordering, kitchen tracking (Pending -> Preparing -> Ready -> Delivered).
-- **`LaundryController`**: Creates laundry orders, tracking (Pending -> Collected -> Washing -> Ready -> Delivered), damage reporting.
-- **`HousekeepingController`**: Cleaning tasks overview, inspection submissions, damage/lost items reports.
-- **`MaintenanceController`**: Maintenance logs that toggle room availability.
-- **`ReportController`**: Generates reports (Reservation, Occupancy, Revenue, Guest History, HK, F&B, etc.) with print/export functions.
+#### [MODIFY] [footer.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/layouts/partials/footer.blade.php)
+- Polish the footer layout with low-opacity text, clean dividers, and a balanced layout.
 
 ---
 
-### Views & Layouts
+### Dashboard Cleanups
 
-#### [NEW] [layouts/admin.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/layouts/admin.blade.php)
-- Main shell layout incorporating the AdminHMD template. Includes the dynamic sidebar, top navbar, theme toggler (light/dark mode), and user profile dropdown.
+#### [MODIFY] [admin.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/dashboards/admin.blade.php)
+- Clean up any remaining hardcoded container backgrounds or text colors.
+- Enhance room grid status visualization using soft borders and distinct indicators.
 
-#### [NEW] [views](file:///c:/xampp/htdocs/hotel-project/resources/views)
-- **`auth/login.blade.php`** & **`auth/register.blade.php`**: Styled auth pages.
-- **`dashboards/`**: Specific layout folders for Admin, FO, Housekeeping, and F&B.
-- **`master/`**: Management views for rooms, room types, users, F&B menus, laundry services.
-- **`reservations/`**: Real-time room grid, reservation form, history list.
-- **`folios/`**: Dynamic statement ledger and charge addition panel.
-- **`fb/`** & **`laundry/`**: Service ordering panels and staff operational dashboards.
-- **`housekeeping/`** & **`maintenance/`**: Cleaning checklists, inspections, and repair logs.
-- **`reports/`**: Analytics dashboard with filters and export hooks.
+#### [MODIFY] [fo.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/dashboards/fo.blade.php)
+- Upgrade the interactive Room Map card shapes and pricing formats.
+- Fix any `badge bg-light` usages to use theme-aware soft badges.
+
+#### [MODIFY] [fb.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/dashboards/fb.blade.php)
+- Polish the F&B room service active order list layout.
+- Use soft badges for order statuses (`Preparing`, `Ready`, `Delivered`).
 
 ---
 
-### Printable Forms & Layouts
-We will build dedicated, standalone, printable blade layouts styled to match the provided DOCX templates exactly:
+### Housekeeping Consolidated Hub
 
-1. **Registration Form (`reservations/print-registration.blade.php`)**
-   - Renders a clean print sheet with guest identity, check-in time, payment method, hotel regulations (no durians, non-smoking policy, safety boxes), and double signature lines (Guest, Check-in Agent).
-2. **Extra Bed Form (`reservations/print-extrabed.blade.php`)**
-   - Requisition detail sheet containing the Date, Time, Guest Name, Room, setup duration, qty, price, and copy designations (Guest/FO/Housekeeping).
-3. **Miscellaneous Form (`folios/print-misc.blade.php`)**
-   - Renders a printable voucher style sheet with description lines, cashier signature, and guest signature fields.
-4. **Invoice / Bill Statement (`folios/print-invoice.blade.php`)**
-   - Clean financial summary sheet showing detailed folio ledger, deposits paid, final outstanding balance, and signature sections.
+#### [MODIFY] [hub.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/housekeeping/hub.blade.php)
+- Replace all instances of `bg-white` and `bg-light` with theme-variable compatible styles (`.panel`, `.panel-soft`, `.mini-card`).
+- Standardize the active tabs component to style beautifully on mobile viewports.
+- Replace basic check-in/checkout badge types with soft badges.
+- Fix hardcoded background colors in the damage form section.
+
+---
+
+### Reservations Folio & POS Cart
+
+#### [MODIFY] [show.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/reservations/show.blade.php)
+- Style the Extra Bed form and F&B Room Service POS Cart to fit a clean, cohesive container with visible border guidelines.
+- Remove hardcoded `bg-light` on checkout section.
+- Polish text colors, inputs, table rows, and borders.
+
+---
+
+### Master Data & Forms
+
+#### [MODIFY] [create.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/master/users/create.blade.php)
+- Remove inline `background-color` styles on error alert blocks.
+- Clean up inputs and make button corner shapes consistent.
+
+#### [MODIFY] [edit.blade.php](file:///c:/xampp/htdocs/hotel-project/resources/views/master/users/edit.blade.php)
+- Remove inline `background-color` styles on error alert blocks.
+- Polish edit profile form inputs and save button actions.
 
 ---
 
 ## Verification Plan
 
-### Automated Tests
-- We will run `php artisan test` or build simple route verification tests if needed.
-- We will execute database migration & seed command to ensure error-free schema creation:
-  ```bash
-  php artisan migrate:fresh --seed
-  ```
-
 ### Manual Verification
-- We will run the Laravel local development server:
-  ```bash
-  php artisan serve
-  ```
-- Use a browser subagent or manual checks to log in under each role (`Admin`, `FO`, `HK`, `F&B`) and verify that dashboards render appropriate information.
-- Perform a complete guest lifecycle test:
-  1. FO views availability, selects room, inputs guest info.
-  2. FO takes deposit, prints deposit receipt.
-  3. FO checks-in the guest and prints the **Registration Form**.
-  4. Guest requests an Extra Bed, FO creates request, prints **Extra Bed Requisition Form**, HK completes installation.
-  5. FO adds F&B room service order, F&B updates status, delivered order adds charge to Folio.
-  6. FO adds Laundry order, Laundry updates status, delivered order adds charge to Folio.
-  7. HK reports a room damage, cost adds to Folio.
-  8. FO initiates check-out, reviews folio statement, prints **Invoice / Bill Statement**, processes final payment.
-  9. HK performs room checkout inspection, registers inspection report, changes room status from Dirty to Available.
-  10. Verify that reports reflect occupancy and revenue correctly.
+- Log in with various roles (`Admin`, `FO`, `HK`, `FB`) to view dashboards and verify visual elements.
+- Toggle between **Light Mode** and **Dark Mode** on each dashboard, Housekeeping Hub, and Guest Folio page to inspect contrast levels and check for any unreadable text.
+- Check validation messages on Create/Edit staff user form to ensure errors read clearly.
+- Validate F&B POS order submission.

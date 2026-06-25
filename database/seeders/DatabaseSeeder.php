@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         // 1. Seed Default Users with custom passwords based on role
         User::create([
             'name' => 'Hotel Administrator',
-            'email' => 'admin@ppkdhotel.com',
+            'email' => 'admin@hotel.com',
             'password' => Hash::make('admin123'),
             'role' => 'Admin',
             'status' => 'active',
@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Front Office Staff',
-            'email' => 'fo@ppkdhotel.com',
+            'email' => 'fo@hotel.com',
             'password' => Hash::make('fo123'),
             'role' => 'FO',
             'status' => 'active',
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Housekeeping Staff',
-            'email' => 'hk@ppkdhotel.com',
+            'email' => 'hk@hotel.com',
             'password' => Hash::make('hk123'),
             'role' => 'HK',
             'status' => 'active',
@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'F&B Staff',
-            'email' => 'fb@ppkdhotel.com',
+            'email' => 'fb@hotel.com',
             'password' => Hash::make('fb123'),
             'role' => 'FB',
             'status' => 'active',

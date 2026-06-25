@@ -32,9 +32,35 @@ class HousekeepingController extends Controller
 
         $tasks = $query->orderBy('created_at', 'desc')->get();
         $hkStaff = User::where('role', 'HK')->where('status', 'active')->get();
-        $rooms = Room::where('is_active', true)->get();
+        $rooms = Room::where('is_active', true)->orderBy('room_number')->get();
 
-        return view('housekeeping.tasks', compact('tasks', 'hkStaff', 'rooms'));
+        // Load other modules for the unified hub
+        $pendingTasks = HousekeepingTask::with('room.roomType')
+            ->where('status', 'ready_for_inspection')
+            ->get();
+        $inspections = RoomInspection::with(['room.roomType', 'housekeepingTask.assignedTo'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $damages = DamageReport::with(['room', 'reportedBy', 'guest'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $activeReservations = Reservation::with('guest')
+            ->where('status', 'CI')
+            ->get();
+        $lostFoundReports = LostFoundReport::with(['room', 'reportedBy'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $maintenanceRequests = MaintenanceRequest::with(['room', 'reportedBy'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('housekeeping.hub', compact(
+            'tasks', 'hkStaff', 'rooms', 
+            'pendingTasks', 'inspections', 
+            'damages', 'activeReservations', 
+            'lostFoundReports', 
+            'maintenanceRequests'
+        ));
     }
 
     public function startTask(Request $request, $id)
@@ -113,7 +139,7 @@ class HousekeepingController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return redirect()->route('hk.inspections.index')->with('success', 'Inspection logged successfully.');
+        return redirect()->route('hk.tasks', ['tab' => 'inspections'])->with('success', 'Inspection logged successfully.');
     }
 
     // 3. Damage Reports
@@ -172,7 +198,7 @@ class HousekeepingController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('hk.damages.index')->with('success', 'Damage report submitted.');
+        return redirect()->route('hk.tasks', ['tab' => 'report'])->with('success', 'Damage report submitted.');
     }
 
     // 4. Lost & Found
@@ -207,7 +233,7 @@ class HousekeepingController extends Controller
             'status' => 'lost',
         ]);
 
-        return redirect()->route('hk.lost-found.index')->with('success', 'Lost & Found item recorded.');
+        return redirect()->route('hk.tasks', ['tab' => 'report'])->with('success', 'Lost & Found item recorded.');
     }
 
     public function claimLostFound(Request $request, $id)
@@ -219,7 +245,7 @@ class HousekeepingController extends Controller
             'claim_date' => now(),
         ]);
 
-        return back()->with('success', 'Item marked as claimed.');
+        return redirect()->route('hk.tasks', ['tab' => 'logs'])->with('success', 'Item marked as claimed.');
     }
 
     // 5. Maintenance Requests
@@ -255,7 +281,7 @@ class HousekeepingController extends Controller
         // Update room status to 'M' (Maintenance)
         Room::findOrFail($request->room_id)->update(['status' => 'M']);
 
-        return redirect()->route('hk.maintenance.index')->with('success', 'Maintenance request logged. Room status set to Maintenance.');
+        return redirect()->route('hk.tasks', ['tab' => 'report'])->with('success', 'Maintenance request logged. Room status set to Maintenance.');
     }
 
     public function completeMaintenance(Request $request, $id)
@@ -277,7 +303,7 @@ class HousekeepingController extends Controller
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Maintenance completed. Room status set to Dirty (Pending Cleaning).');
+        return redirect()->route('hk.tasks', ['tab' => 'logs'])->with('success', 'Maintenance completed. Room status set to Dirty (Pending Cleaning).');
     }
 
     // 6. Extra Bed Task Complete

@@ -14,33 +14,45 @@
   </div>
 </div>
 
-<div class="row g-3">
-  <!-- Metrics cards -->
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-danger small d-block mb-1">Dirty Rooms</span>
-      <span class="h3 mb-0 text-danger">{{ $roomsCount['dirty'] }}</span>
-    </div>
+<!-- Metrics row -->
+<section class="row g-3" aria-label="Housekeeping metrics">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-danger">
+      <div class="metric-top">
+        <span class="metric-label">Dirty Rooms</span>
+        <span class="metric-icon"><i class="bi bi-trash3" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['dirty'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-warning small d-block mb-1">Cleaning In-Progress</span>
-      <span class="h3 mb-0 text-warning">{{ $roomsCount['cleaning'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-warning">
+      <div class="metric-top">
+        <span class="metric-label">Cleaning In-Progress</span>
+        <span class="metric-icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['cleaning'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-success small d-block mb-1">Available Rooms</span>
-      <span class="h3 mb-0 text-success">{{ $roomsCount['available'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-success">
+      <div class="metric-top">
+        <span class="metric-label">Available Rooms</span>
+        <span class="metric-icon"><i class="bi bi-door-open" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['available'] }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-dark small d-block mb-1">Under Maintenance</span>
-      <span class="h3 mb-0 text-dark">{{ $roomsCount['maintenance'] }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-primary">
+      <div class="metric-top">
+        <span class="metric-label">Under Maintenance</span>
+        <span class="metric-icon"><i class="bi bi-wrench" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $roomsCount['maintenance'] }}</div>
+    </article>
   </div>
-</div>
+</section>
 
 <div class="row g-3 mt-3">
   <!-- Cleaning tasks -->
@@ -90,7 +102,7 @@
                     <!-- Inspection Modal -->
                     <div class="modal fade" id="inspectModal-{{ $task->id }}" tabindex="-1" aria-labelledby="inspectModalLabel" aria-hidden="true">
                       <div class="modal-dialog">
-                        <div class="modal-content text-dark">
+                        <div class="modal-content">
                           <form action="{{ route('hk.inspections.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="housekeeping_task_id" value="{{ $task->id }}">
@@ -193,7 +205,7 @@
 
     <!-- Maintenance requests list -->
     <div class="panel p-3">
-      <h5 class="fw-bold mb-3"><i class="bi bi-wrench text-dark"></i> Maintenance & Repairs</h5>
+      <h5 class="fw-bold mb-3"><i class="bi bi-wrench text-primary"></i> Maintenance & Repairs</h5>
       <div style="max-height: 200px; overflow-y: auto;">
         @forelse($maintenanceTasks as $mt)
           <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">

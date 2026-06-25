@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@block('title', 'Add Staff User')
+@section('title', 'Add Staff User')
 
 @section('content')
 <div class="page-heading">
@@ -20,6 +20,16 @@
 <div class="row mt-3">
   <div class="col-12 col-md-8 col-lg-6">
     <div class="panel p-4">
+      @if ($errors->any())
+        <div class="alert alert-danger border-0 shadow-sm mb-3 small" role="alert" style="border-left: 4px solid #ef4444 !important;">
+          <ul class="mb-0 ps-3">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
+
       <form action="{{ route('master.users.store') }}" method="POST" class="needs-validation" novalidate>
         @csrf
         

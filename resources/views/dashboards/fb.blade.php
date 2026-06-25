@@ -14,33 +14,45 @@
   </div>
 </div>
 
-<div class="row g-3">
-  <!-- Metrics cards -->
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-secondary small d-block mb-1">Incoming Orders</span>
-      <span class="h3 mb-0 text-dark">{{ $fbOrders->where('status', 'Pending')->count() }}</span>
-    </div>
+<!-- Metrics row -->
+<section class="row g-3" aria-label="F&B metrics">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-primary">
+      <div class="metric-top">
+        <span class="metric-label">Incoming Orders</span>
+        <span class="metric-icon"><i class="bi bi-bell" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $fbOrders->where('status', 'Pending')->count() }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-warning small d-block mb-1">Preparing</span>
-      <span class="h3 mb-0 text-warning">{{ $fbOrders->where('status', 'Preparing')->count() }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-warning">
+      <div class="metric-top">
+        <span class="metric-label">Preparing</span>
+        <span class="metric-icon"><i class="bi bi-fire" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $fbOrders->where('status', 'Preparing')->count() }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-info small d-block mb-1">Ready for Delivery</span>
-      <span class="h3 mb-0 text-info">{{ $fbOrders->where('status', 'Ready')->count() }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-info">
+      <div class="metric-top">
+        <span class="metric-label">Ready for Delivery</span>
+        <span class="metric-icon"><i class="bi bi-check-all" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $fbOrders->where('status', 'Ready')->count() }}</div>
+    </article>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="p-3 border rounded bg-white shadow-sm text-center">
-      <span class="text-success small d-block mb-1">Breakfast Guests</span>
-      <span class="h3 mb-0 text-success">{{ $breakfastGuests->count() }}</span>
-    </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <article class="metric-card metric-success">
+      <div class="metric-top">
+        <span class="metric-label">Breakfast Guests</span>
+        <span class="metric-icon"><i class="bi bi-egg-fried" aria-hidden="true"></i></span>
+      </div>
+      <div class="metric-value">{{ $breakfastGuests->count() }}</div>
+    </article>
   </div>
-</div>
+</section>
 
 <div class="row g-3 mt-3">
   <!-- Room service orders queue -->
@@ -60,19 +72,19 @@
                   <small class="text-muted">Placed at: {{ $order->order_date->format('H:i') }} | Guest: {{ $order->reservation->guest->name }}</small>
                 </div>
                 <div>
-                  <span class="badge bg-{{ $order->status === 'Pending' ? 'secondary' : ($order->status === 'Preparing' ? 'warning' : 'info') }}">{{ $order->status }}</span>
+                  <span class="badge badge-soft-{{ $order->status === 'Pending' ? 'secondary' : ($order->status === 'Preparing' ? 'warning' : 'info') }}">{{ $order->status }}</span>
                 </div>
               </div>
 
               <!-- Order items -->
               <ul class="list-group list-group-flush mb-3">
                 @foreach($order->items as $item)
-                  <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent text-dark border-0">
+                  <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent text-body border-0">
                     <span>{{ $item->qty }}x {{ $item->menu->name }}</span>
                     <span class="font-monospace small">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</span>
                   </li>
                 @endforeach
-                <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent fw-bold text-dark border-top">
+                <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent fw-bold text-body border-top">
                   <span>Total Amount</span>
                   <span>Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </li>
@@ -142,9 +154,9 @@
                 <td>{{ $res->guest->name }}<br><small class="text-muted">{{ $res->guest->phone }}</small></td>
                 <td>
                   @if($res->room->roomType->breakfast_included)
-                    <span class="badge bg-success">Included ({{ $res->room->roomType->capacity }} Pax)</span>
+                    <span class="badge badge-soft-success">Included ({{ $res->room->roomType->capacity }} Pax)</span>
                   @else
-                    <span class="badge bg-warning">Optional</span>
+                    <span class="badge badge-soft-warning">Optional</span>
                   @endif
                 </td>
               </tr>

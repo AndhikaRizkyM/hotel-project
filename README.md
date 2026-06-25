@@ -186,10 +186,10 @@ Kamu bisa masuk menggunakan akun-akun uji coba di bawah ini untuk melihat perbed
 
 | Divisi / Peran | Alamat Email | Password | Hak Akses Utama |
 | :--- | :--- | :--- | :--- |
-| **Hotel Administrator** | `admin@ppkdhotel.com` | `admin123` | Semua menu operasional, manajemen pegawai (Master Data), dan laporan analytics keuangan. |
-| **Front Office Staff** | `fo@ppkdhotel.com` | `fo123` | Cek ketersediaan kamar, reservasi, check-in/out tamu, pembayaran deposit, cetak kwitansi & invoice. |
-| **Housekeeping Staff** | `hk@ppkdhotel.com` | `hk123` | Mengubah status pembersihan kamar, input QC inspeksi kelayakan, laporan kerusakan barang, barang hilang, dan maintenance. |
-| **F&B Kitchen Staff** | `fb@ppkdhotel.com` | `fb123` | Melihat menu sarapan tamu menginap harian dan mengelola antrean pesanan room service dapur hotel. |
+| **Hotel Administrator** | `admin@hotel.com` | `admin123` | Semua menu operasional, manajemen pegawai (Master Data), dan laporan analytics keuangan. |
+| **Front Office Staff** | `fo@hotel.com` | `fo123` | Cek ketersediaan kamar, reservasi, check-in/out tamu, pembayaran deposit, cetak kwitansi & invoice. |
+| **Housekeeping Staff** | `hk@hotel.com` | `hk123` | Mengubah status pembersihan kamar, input QC inspeksi kelayakan, laporan kerusakan barang, barang hilang, dan maintenance. |
+| **F&B Kitchen Staff** | `fb@hotel.com` | `fb123` | Melihat menu sarapan tamu menginap harian dan mengelola antrean pesanan room service dapur hotel. |
 
 ### Langkah 4: Jalankan Test Otomatis (Opsional)
 Untuk memastikan seluruh fungsi pemrograman dan rute sistem berjalan dengan baik tanpa error:

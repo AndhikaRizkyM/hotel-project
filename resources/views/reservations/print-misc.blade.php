@@ -7,85 +7,116 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      font-size: 10pt;
-      color: #333;
-      margin: 30px;
+      font-size: 11pt;
+      color: #000;
+      margin: 20px;
+      background-color: #fff;
     }
-    .voucher-container {
-      border: 1px solid #ccc;
-      padding: 20px;
-      max-width: 600px;
+    .voucher-box {
+      border: 1px solid #000;
+      padding: 30px;
+      max-width: 650px;
       margin: 0 auto;
-      border-radius: 6px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background: #fff;
     }
-    .header-table {
-      width: 100%;
-      border-bottom: 2px solid #1e3a8a;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 25px;
+      gap: 15px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 15px;
     }
-    .header-table h3 {
-      margin: 0;
-      color: #1e3a8a;
-      font-size: 15pt;
+    .header .logo {
+      height: 50px;
+      width: auto;
     }
-    .voucher-title {
-      font-size: 12pt;
+    .header .hotel-title {
+      font-size: 18pt;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .form-title {
+      text-align: center;
+      font-size: 14pt;
       font-weight: bold;
       text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 20px;
-      letter-spacing: 0.5px;
-      color: #333;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
     }
-    table.data-table {
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-size: 10.5pt;
+    }
+    .info-group {
+      display: flex;
+      align-items: flex-end;
+    }
+    .info-group strong {
+      margin-right: 8px;
+    }
+    .info-group .value {
+      border-bottom: 1px solid #000;
+      min-width: 150px;
+      padding-bottom: 1px;
+    }
+    table.misc-table {
       width: 100%;
-      margin-bottom: 20px;
+      border-collapse: collapse;
+      margin-bottom: 30px;
     }
-    table.data-table td {
-      padding: 6px 0;
+    table.misc-table th, table.misc-table td {
+      border: 1px solid #000;
+      padding: 8px 12px;
     }
-    table.data-table td.label {
+    table.misc-table th {
+      background-color: #f2f2f2;
       font-weight: bold;
-      width: 30%;
+      text-transform: uppercase;
+      font-size: 9.5pt;
     }
-    .items-box {
-      border-top: 1px solid #eee;
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-      margin-bottom: 20px;
+    table.misc-table td.cell-desc {
+      text-align: left;
+      height: 24px; /* fixed height to ensure blank rows look clean */
     }
-    .total-amount {
-      font-size: 12pt;
-      font-weight: bold;
+    table.misc-table td.cell-amount {
       text-align: right;
-      color: #1e3a8a;
+      width: 180px;
+    }
+    table.misc-table tr.total-row td {
+      font-weight: bold;
+      background-color: #f9f9f9;
+    }
+    table.misc-table tr.total-row td.cell-total-label {
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 10pt;
     }
     .signatures {
       display: flex;
       justify-content: space-between;
-      margin-top: 40px;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      font-size: 10.5pt;
     }
-    .sig-box {
+    .sig-col {
       width: 45%;
       text-align: center;
-    }
-    .sig-line {
-      border-bottom: 1px solid #666;
-      margin-top: 50px;
-      margin-bottom: 5px;
     }
     .no-print-btn {
       display: block;
       margin: 20px auto;
       padding: 8px 16px;
-      background-color: #1e3a8a;
+      background-color: #000;
       color: #fff;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 10pt;
+      border-radius: 4px;
     }
     @media print {
       .no-print-btn {
@@ -94,10 +125,9 @@
       body {
         margin: 0;
       }
-      .voucher-container {
-        border: none;
-        box-shadow: none;
-        padding: 0;
+      .voucher-box {
+        border: 1px solid #000;
+        padding: 20px;
       }
     }
   </style>
@@ -106,80 +136,76 @@
 
   <button class="no-print-btn" onclick="window.print()">Print Receipt</button>
 
-  <div class="voucher-container">
-    <table class="header-table">
-      <tr>
-        <td>
-          <h3>PPKD HOTEL MANAGEMENT</h3>
-          <p style="margin: 2px 0; font-size: 8.5pt; color: #666;">Guest Folio Miscellaneous Adjustment Receipt</p>
-        </td>
-        <td style="text-align: right; font-size: 9pt;">
-          <strong>Date:</strong> {{ now()->format('d M Y H:i') }}
-        </td>
-      </tr>
-    </table>
-
-    <div class="voucher-title">Miscellaneous Folio Voucher</div>
-
-    <table class="data-table">
-      <tr>
-        <td class="label">Reservation No.</td>
-        <td>: {{ $reservation->reservation_number }}</td>
-      </tr>
-      <tr>
-        <td class="label">Guest Name</td>
-        <td>: {{ $reservation->guest->name }}</td>
-      </tr>
-      <tr>
-        <td class="label">Room Number</td>
-        <td>: Room {{ $reservation->room->room_number }}</td>
-      </tr>
-    </table>
-
-    <div class="items-box">
-      <h6 style="margin: 0 0 8px 0; font-size: 9.5pt; font-weight: bold; color: #666;">Ledger Transaction Record:</h6>
-      <table style="width: 100%; font-size: 9.5pt;">
-        <thead>
-          <tr style="border-bottom: 1px solid #eee; font-weight: bold;">
-            <td style="padding: 4px 0;">Item Description</td>
-            <td style="text-align: right; padding: 4px 0;">Amount (IDR)</td>
-          </tr>
-        </thead>
-        <tbody>
-          @php $tot = 0; @endphp
-          @if($reservation->folio)
-            @forelse($reservation->folio->items as $item)
-              @if($item->item_type === 'Miscellaneous Charge' || $item->item_type === 'Breakfast' || $item->item_type === 'Damage Charge')
-                @php $tot += $item->amount; @endphp
-                <tr>
-                  <td style="padding: 5px 0;">{{ $item->description }} ({{ $item->item_type }})</td>
-                  <td style="text-align: right; padding: 5px 0;">Rp{{ number_format($item->amount, 0, ',', '.') }}</td>
-                </tr>
-              @endif
-            @empty
-              <tr><td colspan="2" style="text-align: center; color: #888;">No miscellaneous items listed.</td></tr>
-            @endforelse
-          @endif
-        </tbody>
-      </table>
+  <div class="voucher-box">
+    <div class="header">
+      <img src="{{ asset('logo_PPKDJP.png') }}" alt="Logo" class="logo">
+      <div class="hotel-title">PPKD HOTEL</div>
     </div>
 
-    @if($tot > 0)
-      <div class="total-amount">
-        Total Adjustments: Rp{{ number_format($tot, 0, ',', '.') }}
+    <div class="form-title">MISCELLANEOUS FORM</div>
+
+    <div class="info-row">
+      <div class="info-group">
+        <strong>Guest Name:</strong>
+        <span class="value">{{ $reservation->guest->name }}</span>
       </div>
-    @endif
+      <div class="info-group">
+        <strong>Room No.</strong>
+        <span class="value">{{ $reservation->room->room_number }}</span>
+      </div>
+    </div>
+
+    @php
+      $miscItems = [];
+      $totalAmount = 0;
+      if ($reservation->folio && $reservation->folio->items) {
+          foreach ($reservation->folio->items as $item) {
+              if (in_array($item->item_type, ['Miscellaneous Charge', 'Breakfast', 'Damage Charge'])) {
+                  $miscItems[] = $item;
+                  $totalAmount += $item->amount;
+              }
+          }
+      }
+      $totalRowsNeeded = 7;
+      $itemsCount = count($miscItems);
+    @endphp
+
+    <table class="misc-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="text-align: right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for ($i = 0; $i < max($totalRowsNeeded, $itemsCount); $i++)
+          @if (isset($miscItems[$i]))
+            <tr>
+              <td class="cell-desc">{{ $miscItems[$i]->description }} ({{ $miscItems[$i]->item_type }})</td>
+              <td class="cell-amount">Rp{{ number_format($miscItems[$i]->amount, 0, ',', '.') }}</td>
+            </tr>
+          @else
+            <tr>
+              <td class="cell-desc">&nbsp;</td>
+              <td class="cell-amount">&nbsp;</td>
+            </tr>
+          @endif
+        @endfor
+        <tr class="total-row">
+          <td class="cell-total-label">Total</td>
+          <td class="cell-amount">Rp{{ number_format($totalAmount, 0, ',', '.') }}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <div class="signatures">
-      <div class="sig-box">
-        <p>Guest Signature</p>
-        <div class="sig-line"></div>
-        <p>{{ $reservation->guest->name }}</p>
+      <div class="sig-col">
+        <p>Cashier: ___________________</p>
+        <p style="margin-top: 5px;">( {{ auth()->user()->name }} )</p>
       </div>
-      <div class="sig-box">
-        <p>Folio Clerk Cashier</p>
-        <div class="sig-line"></div>
-        <p>{{ auth()->user()->name }}</p>
+      <div class="sig-col">
+        <p>Guest: ___________________</p>
+        <p style="margin-top: 5px;">( {{ $reservation->guest->name }} )</p>
       </div>
     </div>
   </div>

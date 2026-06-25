@@ -75,48 +75,48 @@
 <!-- Rooms Status Grid -->
 <div class="row g-3 mt-3">
   <div class="col-12">
-    <div class="panel p-3">
+    <div class="panel">
       <h2 class="h5 mb-3 section-title"><i class="bi bi-door-open" aria-hidden="true"></i><span>Rooms Status Summary</span></h2>
       <div class="row row-cols-2 row-cols-sm-3 row-cols-md-7 g-2 text-center">
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-success mb-0">{{ $roomsCount['available'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-success mb-0">{{ $roomsCount['available'] }}</strong>
             <span class="text-muted small">Available</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-primary mb-0">{{ $roomsCount['occupied'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-primary mb-0">{{ $roomsCount['occupied'] }}</strong>
             <span class="text-muted small">Occupied</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-info mb-0">{{ $roomsCount['reserved'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-info mb-0">{{ $roomsCount['reserved'] }}</strong>
             <span class="text-muted small">Reserved</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-danger mb-0">{{ $roomsCount['dirty'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-danger mb-0">{{ $roomsCount['dirty'] }}</strong>
             <span class="text-muted small">Dirty</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-warning mb-0">{{ $roomsCount['cleaning'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-warning mb-0">{{ $roomsCount['cleaning'] }}</strong>
             <span class="text-muted small">Cleaning</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h4 text-dark mb-0">{{ $roomsCount['maintenance'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-secondary mb-0">{{ $roomsCount['maintenance'] }}</strong>
             <span class="text-muted small">Maintenance</span>
           </div>
         </div>
         <div class="col">
-          <div class="p-2 border rounded bg-light">
-            <span class="d-block h5 text-secondary mb-0" style="margin-top: 4px;">{{ $roomsCount['total'] }}</span>
+          <div class="mini-card p-2 text-center" style="min-height: auto;">
+            <strong class="d-block h4 text-body mb-0">{{ $roomsCount['total'] }}</strong>
             <span class="text-muted small">Total Rooms</span>
           </div>
         </div>
@@ -157,7 +157,7 @@
                 <td>Room {{ $rsv->room->room_number }} ({{ $rsv->room->roomType->name }})</td>
                 <td><small>{{ $rsv->check_in_date->format('d M') }} - {{ $rsv->check_out_date->format('d M Y') }}</small></td>
                 <td>
-                  <span class="badge bg-{{ $rsv->status_color }}">{{ $rsv->status_text }}</span>
+                  <span class="badge badge-soft-{{ $rsv->status_color }}">{{ $rsv->status_text }}</span>
                 </td>
                 <td>Rp {{ number_format($rsv->total_charge, 0, ',', '.') }}</td>
               </tr>

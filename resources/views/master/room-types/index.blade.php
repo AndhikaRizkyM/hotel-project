@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@block('title', 'Manage Room Types')
+@section('title', 'Manage Room Types')
 
 @section('content')
 <div class="page-heading">

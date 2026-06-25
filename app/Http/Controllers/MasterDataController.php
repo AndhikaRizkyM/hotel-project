@@ -32,7 +32,7 @@ class MasterDataController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'min:5'],
             'role' => ['required', 'string', 'in:Admin,FO,HK,FB'],
         ]);
 
@@ -61,7 +61,7 @@ class MasterDataController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'string', 'in:Admin,FO,HK,FB'],
-            'password' => ['nullable', Rules\Password::defaults()],
+            'password' => ['nullable', 'string', 'min:5'],
         ]);
 
         $data = [
