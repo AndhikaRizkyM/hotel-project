@@ -74,6 +74,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/master/laundry-services/{id}', [MasterDataController::class, 'laundryServicesUpdate'])->name('master.laundry-services.update');
         Route::post('/master/laundry-services/{id}/toggle', [MasterDataController::class, 'laundryServicesToggle'])->name('master.laundry-services.toggle');
 
+        // QC Inspection Charges CRUD
+        Route::get('/master/inspection-charges', [MasterDataController::class, 'inspectionChargesIndex'])->name('master.inspection-charges.index');
+        Route::get('/master/inspection-charges/create', [MasterDataController::class, 'inspectionChargesCreate'])->name('master.inspection-charges.create');
+        Route::post('/master/inspection-charges', [MasterDataController::class, 'inspectionChargesStore'])->name('master.inspection-charges.store');
+        Route::get('/master/inspection-charges/{id}/edit', [MasterDataController::class, 'inspectionChargesEdit'])->name('master.inspection-charges.edit');
+        Route::put('/master/inspection-charges/{id}', [MasterDataController::class, 'inspectionChargesUpdate'])->name('master.inspection-charges.update');
+        Route::delete('/master/inspection-charges/{id}', [MasterDataController::class, 'inspectionChargesDestroy'])->name('master.inspection-charges.destroy');
+
         // Reports View & Exports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
@@ -92,8 +100,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/fo/reservations/{id}', [ReservationController::class, 'show'])->name('fo.reservations.show');
         Route::post('/fo/reservations/{id}/check-in', [ReservationController::class, 'checkIn'])->name('fo.reservations.check-in');
         Route::post('/fo/reservations/{id}/check-out', [ReservationController::class, 'checkOut'])->name('fo.reservations.check-out');
+        Route::post('/fo/reservations/{id}/request-inspection', [ReservationController::class, 'requestInspection'])->name('fo.reservations.request-inspection');
         Route::post('/fo/reservations/{id}/cancel', [ReservationController::class, 'cancel'])->name('fo.reservations.cancel');
         Route::post('/fo/reservations/{id}/no-show', [ReservationController::class, 'noShow'])->name('fo.reservations.no-show');
+        Route::post('/fo/reservations/{id}/damage/{damageId}/{action}', [ReservationController::class, 'processDamageIssue'])->name('fo.reservations.damage-process');
+        Route::post('/fo/reservations/{id}/lost/{lostId}/{action}', [ReservationController::class, 'processLostIssue'])->name('fo.reservations.lost-process');
 
         // Deposit actions
         Route::post('/fo/reservations/{id}/deposit', [DepositController::class, 'store'])->name('fo.reservations.deposit');
@@ -105,9 +116,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/fo/reservations/{id}/laundry-order', [ReservationController::class, 'storeLaundryOrder'])->name('fo.reservations.laundry-order');
 
         // Guest profiles
+        Route::get('/fo/guests/search', [ReservationController::class, 'guestsSearch'])->name('fo.guests.search');
         Route::get('/fo/guests', [ReservationController::class, 'guestsIndex'])->name('fo.guests.index');
+        Route::post('/fo/guests', [ReservationController::class, 'guestsStore'])->name('fo.guests.store');
         Route::get('/fo/guests/{id}', [ReservationController::class, 'guestsShow'])->name('fo.guests.show');
         Route::put('/fo/guests/{id}', [ReservationController::class, 'guestsUpdate'])->name('fo.guests.update');
+        Route::delete('/fo/guests/{id}', [ReservationController::class, 'guestsDestroy'])->name('fo.guests.destroy');
 
         // Print paths
         Route::get('/fo/print-registration/{id}', [ReservationController::class, 'printRegistration'])->name('fo.print-registration');
@@ -127,6 +141,7 @@ Route::middleware('auth')->group(function () {
         // Inspections
         Route::get('/hk/inspections', [HousekeepingController::class, 'inspectionsIndex'])->name('hk.inspections.index');
         Route::post('/hk/inspections', [HousekeepingController::class, 'storeInspection'])->name('hk.inspections.store');
+        Route::post('/hk/inspections/pre-checkout', [HousekeepingController::class, 'storePreCheckoutInspection'])->name('hk.inspections.store-pre-checkout');
         
         // Damage Reports
         Route::get('/hk/damages', [HousekeepingController::class, 'damagesIndex'])->name('hk.damages.index');
@@ -156,6 +171,7 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::middleware('role:Admin,FB')->group(function () {
         Route::get('/fb/breakfast', [FbController::class, 'breakfastList'])->name('fb.breakfast');
+        Route::post('/fb/breakfast/{id}/status', [FbController::class, 'updateBreakfastStatus'])->name('fb.breakfast.status');
         Route::get('/fb/orders', [FbController::class, 'ordersIndex'])->name('fb.orders.index');
         Route::post('/fb/orders/{id}/status', [FbController::class, 'updateStatus'])->name('fb.orders.status');
     });

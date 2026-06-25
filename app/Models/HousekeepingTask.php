@@ -13,6 +13,7 @@ class HousekeepingTask extends Model
 
     protected $fillable = [
         'room_id',
+        'reservation_id',
         'task_type', // cleaning_checkout, cleaning_daily, inspection
         'status', // pending, cleaning, ready_for_inspection, completed
         'assigned_to_user_id',
@@ -28,6 +29,11 @@ class HousekeepingTask extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 
     public function assignedTo(): BelongsTo

@@ -5,10 +5,10 @@
 @section('content')
 <div class="page-heading">
   <div class="page-heading-copy">
-    <span class="page-icon"><i class="bi bi-egg-fried" aria-hidden="true"></i></span>
+    <div class="page-icon" style="border-radius: 12px; background: rgba(239, 68, 68, 0.1); color: #ef4444;"><i class="bi bi-egg-fried" aria-hidden="true"></i></div>
     <div>
       <p class="eyebrow mb-1">FOOD & BEVERAGE OPERATIONS</p>
-      <h1 class="h3 mb-1">Kitchen & Room Service</h1>
+      <h1 class="h3 mb-1 fw-bold">Kitchen & Room Service</h1>
       <p class="text-muted mb-0">Track incoming room service orders, adjust statuses, and review breakfast lists.</p>
     </div>
   </div>
@@ -17,152 +17,235 @@
 <!-- Metrics row -->
 <section class="row g-3" aria-label="F&B metrics">
   <div class="col-12 col-sm-6 col-xl-3">
-    <article class="metric-card metric-primary">
+    <article class="metric-card metric-primary panel-premium border-0 shadow-sm" style="min-height: 120px; border-radius: 14px; padding: 1.15rem;">
       <div class="metric-top">
-        <span class="metric-label">Incoming Orders</span>
-        <span class="metric-icon"><i class="bi bi-bell" aria-hidden="true"></i></span>
+        <span class="metric-label" style="font-weight: 700; font-size: 0.72rem;">Incoming Orders</span>
+        <span class="metric-icon" style="background: rgba(37, 99, 235, 0.15); color: var(--admin-primary);"><i class="bi bi-bell" aria-hidden="true"></i></span>
       </div>
-      <div class="metric-value">{{ $fbOrders->where('status', 'Pending')->count() }}</div>
+      <div class="metric-value" style="font-weight: 800; font-size: 1.75rem; margin-top: 0.5rem;">{{ $fbOrders->where('status', 'Pending')->count() }}</div>
     </article>
   </div>
   <div class="col-12 col-sm-6 col-xl-3">
-    <article class="metric-card metric-warning">
+    <article class="metric-card metric-warning panel-premium border-0 shadow-sm" style="min-height: 120px; border-radius: 14px; padding: 1.15rem;">
       <div class="metric-top">
-        <span class="metric-label">Preparing</span>
-        <span class="metric-icon"><i class="bi bi-fire" aria-hidden="true"></i></span>
+        <span class="metric-label" style="font-weight: 700; font-size: 0.72rem;">Preparing</span>
+        <span class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i class="bi bi-fire" aria-hidden="true"></i></span>
       </div>
-      <div class="metric-value">{{ $fbOrders->where('status', 'Preparing')->count() }}</div>
+      <div class="metric-value" style="font-weight: 800; font-size: 1.75rem; margin-top: 0.5rem;">{{ $fbOrders->where('status', 'Preparing')->count() }}</div>
     </article>
   </div>
   <div class="col-12 col-sm-6 col-xl-3">
-    <article class="metric-card metric-info">
+    <article class="metric-card metric-info panel-premium border-0 shadow-sm" style="min-height: 120px; border-radius: 14px; padding: 1.15rem;">
       <div class="metric-top">
-        <span class="metric-label">Ready for Delivery</span>
-        <span class="metric-icon"><i class="bi bi-check-all" aria-hidden="true"></i></span>
+        <span class="metric-label" style="font-weight: 700; font-size: 0.72rem;">Ready for Delivery</span>
+        <span class="metric-icon" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;"><i class="bi bi-check-all" aria-hidden="true"></i></span>
       </div>
-      <div class="metric-value">{{ $fbOrders->where('status', 'Ready')->count() }}</div>
+      <div class="metric-value" style="font-weight: 800; font-size: 1.75rem; margin-top: 0.5rem;">{{ $fbOrders->where('status', 'Ready')->count() }}</div>
     </article>
   </div>
   <div class="col-12 col-sm-6 col-xl-3">
-    <article class="metric-card metric-success">
+    <article class="metric-card metric-success panel-premium border-0 shadow-sm" style="min-height: 120px; border-radius: 14px; padding: 1.15rem;">
       <div class="metric-top">
-        <span class="metric-label">Breakfast Guests</span>
-        <span class="metric-icon"><i class="bi bi-egg-fried" aria-hidden="true"></i></span>
+        <span class="metric-label" style="font-weight: 700; font-size: 0.72rem;">Breakfast Guests</span>
+        <span class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="bi bi-egg-fried" aria-hidden="true"></i></span>
       </div>
-      <div class="metric-value">{{ $breakfastGuests->count() }}</div>
+      <div class="metric-value" style="font-weight: 800; font-size: 1.75rem; margin-top: 0.5rem;">{{ $breakfastGuests->count() }}</div>
     </article>
   </div>
 </section>
 
+<!-- Active Kanban Order Board & Breakfast Summary -->
 <div class="row g-3 mt-3">
-  <!-- Room service orders queue -->
-  <div class="col-12 col-xl-7">
-    <div class="panel">
+  <!-- Room service orders Kanban board -->
+  <div class="col-12 col-xl-9">
+    <div class="panel border-0 shadow-sm h-100" style="border-radius: 14px; background: var(--admin-surface); padding: 1.25rem;">
       <div class="panel-header border-bottom pb-2 mb-3">
-        <h2 class="h5 mb-0 section-title"><i class="bi bi-bell text-danger"></i><span>Active Room Service Orders</span></h2>
+        <h2 class="h6 mb-0 section-title fw-bold">
+          <i class="bi bi-bell" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"></i>
+          <span>Active Room Service Order Board</span>
+        </h2>
       </div>
 
-      <div class="row g-3">
-        @forelse($fbOrders as $order)
-          <div class="col-12">
-            <div class="card shadow-xs border-light p-3">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <div>
-                  <h6 class="fw-bold mb-0">Order #FNB-{{ $order->id }} &mdash; Room {{ $order->reservation->room->room_number }}</h6>
-                  <small class="text-muted">Placed at: {{ $order->order_date->format('H:i') }} | Guest: {{ $order->reservation->guest->name }}</small>
-                </div>
-                <div>
-                  <span class="badge badge-soft-{{ $order->status === 'Pending' ? 'secondary' : ($order->status === 'Preparing' ? 'warning' : 'info') }}">{{ $order->status }}</span>
-                </div>
-              </div>
+      @php
+        $pendingOrders = $fbOrders->where('status', 'Pending');
+        $preparingOrders = $fbOrders->where('status', 'Preparing');
+        $readyOrders = $fbOrders->where('status', 'Ready');
+      @endphp
 
-              <!-- Order items -->
-              <ul class="list-group list-group-flush mb-3">
-                @foreach($order->items as $item)
-                  <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent text-body border-0">
-                    <span>{{ $item->qty }}x {{ $item->menu->name }}</span>
-                    <span class="font-monospace small">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                  </li>
-                @endforeach
-                <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 bg-transparent fw-bold text-body border-top">
-                  <span>Total Amount</span>
-                  <span>Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
-                </li>
-              </ul>
+      <div class="fb-kanban-board">
+        <!-- COLUMN 1: PENDING -->
+        <div class="fb-kanban-col">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0 text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">
+              <span class="indicator-online me-2 bg-secondary" style="animation: none;"></span> Incoming Queue
+            </h6>
+            <span class="badge bg-secondary rounded-pill" style="font-size: 0.7rem;">{{ $pendingOrders->count() }}</span>
+          </div>
 
-              <!-- Action buttons -->
-              <div class="d-flex justify-content-end gap-1">
-                @if($order->status === 'Pending')
+          <div style="max-height: 480px; overflow-y: auto; padding-right: 2px;">
+            @forelse($pendingOrders as $order)
+              <div class="fb-order-card border-warning-subtle" style="border-left: 4px solid #f59e0b !important;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold mb-0" style="font-size: 0.85rem;">Room {{ $order->reservation->room->room_number }}</h6>
+                    <small class="text-muted" style="font-size: 0.7rem;">#FNB-{{ $order->id }} | {{ $order->order_date->format('H:i') }}</small>
+                  </div>
+                  <span class="badge badge-soft-warning" style="font-size: 0.65rem;">Pending</span>
+                </div>
+                
+                <ul class="list-group list-group-flush mb-3 p-0" style="font-size: 0.76rem;">
+                  @foreach($order->items as $item)
+                    <li class="list-group-item d-flex justify-content-between py-1 px-0 bg-transparent text-body border-0">
+                      <span>{{ $item->qty }}x {{ $item->menu->name }}</span>
+                    </li>
+                  @endforeach
+                </ul>
+
+                <div class="d-flex gap-1 justify-content-end">
                   <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
                     @csrf
                     <input type="hidden" name="status" value="Preparing">
-                    <button class="btn btn-warning btn-sm" type="submit"><i class="bi bi-play"></i> Start Preparing</button>
+                    <button class="btn btn-warning btn-tactile btn-xs" type="submit"><i class="bi bi-play-fill"></i> Start Cook</button>
                   </form>
-                @elseif($order->status === 'Preparing')
-                  <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="Ready">
-                    <button class="btn btn-info btn-sm" type="submit"><i class="bi bi-check-circle"></i> Mark Ready</button>
-                  </form>
-                @elseif($order->status === 'Ready')
-                  <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="Delivered">
-                    <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-bicycle"></i> Mark Delivered</button>
-                  </form>
-                @endif
-                
-                @if($order->status !== 'Ready')
                   <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
                     @csrf
                     <input type="hidden" name="status" value="Cancelled">
-                    <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-x-circle"></i> Cancel</button>
+                    <button class="btn btn-outline-danger btn-tactile btn-xs" type="submit"><i class="bi bi-x-circle"></i> Cancel</button>
                   </form>
-                @endif
+                </div>
               </div>
-            </div>
+            @empty
+              <p class="text-muted text-center py-4 small">No pending orders.</p>
+            @endforelse
           </div>
-        @empty
-          <div class="col-12">
-            <p class="text-muted text-center py-4">No active orders in the queue. All caught up!</p>
+        </div>
+
+        <!-- COLUMN 2: PREPARING -->
+        <div class="fb-kanban-col">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0 text-warning" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">
+              <span class="indicator-online me-2 bg-warning" style="animation: breathing-pulse 2s infinite;"></span> Kitchen Cooking
+            </h6>
+            <span class="badge bg-warning rounded-pill" style="font-size: 0.7rem;">{{ $preparingOrders->count() }}</span>
           </div>
-        @endforelse
+
+          <div style="max-height: 480px; overflow-y: auto; padding-right: 2px;">
+            @forelse($preparingOrders as $order)
+              <div class="fb-order-card border-primary-subtle" style="border-left: 4px solid var(--admin-primary) !important;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold mb-0" style="font-size: 0.85rem;">Room {{ $order->reservation->room->room_number }}</h6>
+                    <small class="text-muted" style="font-size: 0.7rem;">#FNB-{{ $order->id }} | {{ $order->order_date->format('H:i') }}</small>
+                  </div>
+                  <span class="badge badge-soft-primary" style="font-size: 0.65rem;">Cooking</span>
+                </div>
+                
+                <ul class="list-group list-group-flush mb-3 p-0" style="font-size: 0.76rem;">
+                  @foreach($order->items as $item)
+                    <li class="list-group-item d-flex justify-content-between py-1 px-0 bg-transparent text-body border-0">
+                      <span>{{ $item->qty }}x {{ $item->menu->name }}</span>
+                    </li>
+                  @endforeach
+                </ul>
+
+                <div class="d-flex gap-1 justify-content-end">
+                  <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="status" value="Ready">
+                    <button class="btn btn-info btn-tactile btn-xs text-white" type="submit"><i class="bi bi-check-circle-fill"></i> Done</button>
+                  </form>
+                  <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="status" value="Cancelled">
+                    <button class="btn btn-outline-danger btn-tactile btn-xs" type="submit"><i class="bi bi-x-circle"></i> Cancel</button>
+                  </form>
+                </div>
+              </div>
+            @empty
+              <p class="text-muted text-center py-4 small">No items currently cooking.</p>
+            @endforelse
+          </div>
+        </div>
+
+        <!-- COLUMN 3: READY FOR DELIVERY -->
+        <div class="fb-kanban-col">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0 text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">
+              <span class="indicator-online me-2" style="animation: breathing-pulse 2s infinite;"></span> Ready & Wait
+            </h6>
+            <span class="badge bg-success rounded-pill" style="font-size: 0.7rem;">{{ $readyOrders->count() }}</span>
+          </div>
+
+          <div style="max-height: 480px; overflow-y: auto; padding-right: 2px;">
+            @forelse($readyOrders as $order)
+              <div class="fb-order-card border-success-subtle" style="border-left: 4px solid #10b981 !important;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold mb-0" style="font-size: 0.85rem;">Room {{ $order->reservation->room->room_number }}</h6>
+                    <small class="text-muted" style="font-size: 0.7rem;">#FNB-{{ $order->id }} | {{ $order->order_date->format('H:i') }}</small>
+                  </div>
+                  <span class="badge badge-soft-success" style="font-size: 0.65rem;">Ready</span>
+                </div>
+                
+                <ul class="list-group list-group-flush mb-3 p-0" style="font-size: 0.76rem;">
+                  @foreach($order->items as $item)
+                    <li class="list-group-item d-flex justify-content-between py-1 px-0 bg-transparent text-body border-0">
+                      <span>{{ $item->qty }}x {{ $item->menu->name }}</span>
+                    </li>
+                  @endforeach
+                </ul>
+
+                <div class="d-flex gap-1 justify-content-end">
+                  <form action="{{ route('fb.orders.status', $order->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="status" value="Delivered">
+                    <button class="btn btn-success btn-tactile btn-xs" type="submit"><i class="bi bi-bicycle"></i> Deliver</button>
+                  </form>
+                </div>
+              </div>
+            @empty
+              <p class="text-muted text-center py-4 small">No orders ready for delivery.</p>
+            @endforelse
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Today's Breakfast guests list -->
-  <div class="col-12 col-xl-5">
-    <div class="panel">
+  <div class="col-12 col-xl-3">
+    <div class="panel border-0 shadow-sm h-100" style="border-radius: 14px; background: var(--admin-surface); padding: 1.25rem;">
       <div class="panel-header border-bottom pb-2 mb-3">
-        <h2 class="h5 mb-0 section-title"><i class="bi bi-egg-fried text-success"></i><span>Today's Breakfast List</span></h2>
+        <h2 class="h6 mb-0 section-title fw-bold">
+          <i class="bi bi-egg-fried" style="background: rgba(16, 185, 129, 0.1); color: #10b981;"></i>
+          <span>Today's Breakfast</span>
+        </h2>
       </div>
 
       <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
-        <table class="table align-middle table-sm">
+        <table class="table align-middle table-sm table-hover mb-0">
           <thead>
             <tr>
-              <th>Room</th>
-              <th>Guest Name</th>
-              <th>Breakfast Option</th>
+              <th style="font-size: 0.72rem;">Room</th>
+              <th style="font-size: 0.72rem;">Guest Name</th>
             </tr>
           </thead>
           <tbody>
             @forelse($breakfastGuests as $res)
               <tr>
                 <td><strong>Room {{ $res->room->room_number }}</strong></td>
-                <td>{{ $res->guest->name }}<br><small class="text-muted">{{ $res->guest->phone }}</small></td>
                 <td>
+                  <div class="fw-semibold text-body" style="font-size: 0.8rem;">{{ $res->guest->name }}</div>
                   @if($res->room->roomType->breakfast_included)
-                    <span class="badge badge-soft-success">Included ({{ $res->room->roomType->capacity }} Pax)</span>
+                    <span class="badge badge-soft-success" style="font-size: 0.6rem; padding: 1px 4px;">Complimentary</span>
                   @else
-                    <span class="badge badge-soft-warning">Optional</span>
+                    <span class="badge badge-soft-warning" style="font-size: 0.6rem; padding: 1px 4px;">Optional</span>
                   @endif
                 </td>
               </tr>
             @empty
               <tr>
-                <td colspan="3" class="text-center text-muted py-3">No checked-in guests at the moment.</td>
+                <td colspan="2" class="text-center text-muted py-4" style="font-size: 0.85rem;">No guests checked-in yet.</td>
               </tr>
             @endforelse
           </tbody>

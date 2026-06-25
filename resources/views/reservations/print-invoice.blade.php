@@ -6,149 +6,156 @@
   <title>Guest Invoice - {{ $reservation->reservation_number }}</title>
   <style>
     body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: Arial, sans-serif;
       font-size: 10pt;
+      color: #000;
+      margin: 20px;
+      background-color: #fff;
       line-height: 1.4;
-      color: #333;
-      margin: 30px;
     }
     .invoice-container {
       max-width: 800px;
       margin: 0 auto;
+      border: 1px solid #000;
+      padding: 30px;
+      background-color: #fff;
     }
     .header {
       display: flex;
-      justify-content: space-between;
-      border-bottom: 2px solid #1e3a8a;
-      padding-bottom: 15px;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 25px;
+      gap: 15px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 15px;
     }
-    .hotel-logo h1 {
-      margin: 0;
-      font-size: 20pt;
-      color: #1e3a8a;
+    .header .logo {
+      height: 55px;
+      width: auto;
+    }
+    .header .hotel-title {
+      font-size: 18pt;
       font-weight: bold;
-    }
-    .hotel-logo p {
-      margin: 2px 0;
-      font-size: 8.5pt;
-      color: #666;
+      letter-spacing: 2px;
     }
     .invoice-title {
-      text-align: right;
-    }
-    .invoice-title h2 {
-      margin: 0;
-      font-size: 16pt;
-      color: #333;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .invoice-title p {
-      margin: 2px 0;
+      text-align: center;
+      font-size: 14pt;
       font-weight: bold;
-      font-size: 9.5pt;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
     }
-    .details-box {
+    .details-grid {
       display: flex;
       justify-content: space-between;
       margin-bottom: 20px;
-      background-color: #f8fafc;
-      padding: 12px;
-      border-radius: 4px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #000;
+      padding: 15px;
+      background-color: #fafafa;
     }
     .details-col {
       width: 48%;
     }
-    .details-col table {
-      width: 100%;
+    .details-row {
+      display: flex;
+      margin-bottom: 6px;
+      font-size: 9pt;
     }
-    .details-col td {
-      padding: 3px 0;
-      vertical-align: top;
-    }
-    .details-col td.label {
+    .details-label {
+      width: 120px;
       font-weight: bold;
-      color: #64748b;
-      width: 40%;
     }
-    .ledger-title {
-      font-size: 11pt;
+    .details-val {
+      flex-grow: 1;
+    }
+    .section-title {
+      font-size: 10pt;
       font-weight: bold;
+      text-transform: uppercase;
       margin-top: 25px;
       margin-bottom: 10px;
-      color: #1e3a8a;
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 5px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 4px;
+      letter-spacing: 0.5px;
     }
-    table.ledger-table {
+    table.data-table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
     }
-    table.ledger-table th, table.ledger-table td {
-      padding: 8px 6px;
-      border-bottom: 1px solid #e2e8f0;
+    table.data-table th, table.data-table td {
+      border: 1px solid #000;
+      padding: 6px 10px;
+      font-size: 8.5pt;
     }
-    table.ledger-table th {
-      background-color: #f1f5f9;
+    table.data-table th {
+      background-color: #f2f2f2;
       font-weight: bold;
-      color: #334155;
       text-align: left;
     }
     .summary-box {
-      width: 45%;
+      width: 320px;
       margin-left: auto;
       margin-top: 15px;
-      border-top: 2px solid #1e3a8a;
-      padding-top: 10px;
+      border: 1px solid #000;
+      padding: 10px;
+      background-color: #fafafa;
     }
     .summary-row {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
+      margin-bottom: 5px;
+      font-size: 9pt;
     }
     .summary-row.total {
-      font-size: 11pt;
       font-weight: bold;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 6px;
-      margin-top: 6px;
-      color: #1e3a8a;
+      border-top: 1px solid #000;
+      padding-top: 5px;
+      margin-top: 5px;
     }
     .signatures {
       display: flex;
       justify-content: space-between;
-      margin-top: 50px;
+      margin-top: 40px;
+      margin-bottom: 20px;
     }
-    .sig-box {
-      width: 40%;
+    .sig-col {
+      width: 45%;
       text-align: center;
     }
+    .sig-title {
+      font-weight: bold;
+      margin-bottom: 0;
+    }
     .sig-line {
-      border-bottom: 1px solid #333;
-      margin-top: 55px;
-      margin-bottom: 5px;
+      margin: 60px auto 5px auto;
+      width: 80%;
+      border-bottom: 1px solid #000;
+    }
+    .sig-name {
+      font-size: 9.5pt;
     }
     .footer-note {
       text-align: center;
-      margin-top: 50px;
+      margin-top: 30px;
       font-size: 8pt;
-      color: #94a3b8;
-      border-top: 1px solid #e2e8f0;
+      font-style: italic;
+      color: #555;
+      border-top: 1px solid #000;
       padding-top: 10px;
     }
     .no-print-btn {
       display: block;
       margin: 20px auto;
       padding: 8px 16px;
-      background-color: #1e3a8a;
+      background-color: #000;
       color: #fff;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 10pt;
+      border-radius: 4px;
     }
     @media print {
       .no-print-btn {
@@ -156,6 +163,10 @@
       }
       body {
         margin: 0;
+      }
+      .invoice-container {
+        border: none;
+        padding: 0;
       }
     }
   </style>
@@ -166,45 +177,63 @@
 
   <div class="invoice-container">
     <div class="header">
-      <div class="hotel-logo">
-        <h1>PPKD HOTEL & RESORT</h1>
-        <p>Jl. Raya Jakarta No. 12, DKI Jakarta</p>
-        <p>Telp: (021) 123456 | Email: billing@ppkdhotel.com</p>
+      <img src="{{ asset('logo_PPKDJP.png') }}" alt="Logo" class="logo">
+      <div class="hotel-title">PPKD HOTEL</div>
+    </div>
+
+    <div class="invoice-title">Guest Folio Invoice</div>
+
+    <div class="details-grid">
+      <div class="details-col">
+        <div class="details-row">
+          <span class="details-label">Guest Name</span>
+          <span class="details-val">: {{ $reservation->guest->name }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">NIK/Passport</span>
+          <span class="details-val">: {{ $reservation->guest->id_number }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Address</span>
+          <span class="details-val">: {{ $reservation->guest->address ?? '-' }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Country</span>
+          <span class="details-val">: {{ $reservation->guest->country }}</span>
+        </div>
       </div>
-      <div class="invoice-title">
-        <h2>Guest Folio Invoice</h2>
-        <p>Invoice No: INV-{{ $reservation->reservation_number }}</p>
-        <p style="font-weight: normal; font-size: 8.5pt; color: #666;">Date: {{ now()->format('d M Y H:i') }}</p>
+      <div class="details-col">
+        <div class="details-row">
+          <span class="details-label">Invoice No.</span>
+          <span class="details-val">: INV-{{ $reservation->reservation_number }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Room No.</span>
+          <span class="details-val">: <strong>Room {{ $reservation->room->room_number }}</strong> ({{ $reservation->room->roomType->name }})</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Check-in</span>
+          <span class="details-val">: {{ \Carbon\Carbon::parse($reservation->check_in_date)->format('d M Y') }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Check-out</span>
+          <span class="details-val">: {{ \Carbon\Carbon::parse($reservation->check_out_date)->format('d M Y') }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Billing Status</span>
+          <span class="details-val">: <strong>{{ $reservation->status === 'CO' ? 'Checked Out / Paid' : 'Checked In / Active' }}</strong></span>
+        </div>
       </div>
     </div>
 
-    <div class="details-box">
-      <div class="details-col">
-        <table>
-          <tr><td class="label">Guest Name</td><td>: {{ $reservation->guest->name }}</td></tr>
-          <tr><td class="label">NIK/Passport</td><td>: {{ $reservation->guest->id_number }}</td></tr>
-          <tr><td class="label">Address</td><td>: {{ $reservation->guest->address ?? '-' }}</td></tr>
-          <tr><td class="label">Country</td><td>: {{ $reservation->guest->country }}</td></tr>
-        </table>
-      </div>
-      <div class="details-col">
-        <table>
-          <tr><td class="label">Room No.</td><td>: <strong>Room {{ $reservation->room->room_number }}</strong> ({{ $reservation->room->roomType->name }})</td></tr>
-          <tr><td class="label">Check-in</td><td>: {{ \Carbon\Carbon::parse($reservation->check_in_date)->format('d M Y') }}</td></tr>
-          <tr><td class="label">Check-out</td><td>: {{ \Carbon\Carbon::parse($reservation->check_out_date)->format('d M Y') }}</td></tr>
-          <tr><td class="label">Billing Status</td><td>: <strong>{{ $reservation->status === 'CO' ? 'Checked Out / Paid' : 'Checked In / Active' }}</strong></td></tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="ledger-title">Transaction Ledger Statement</div>
-    <table class="ledger-table">
+    <div class="section-title">Transaction Ledger Statement</div>
+    <table class="data-table">
       <thead>
         <tr>
           <th style="width: 15%;">Date</th>
-          <th style="width: 20%;">Category</th>
+          <th style="width: 25%;">Category</th>
           <th>Description</th>
-          <th style="text-align: right; width: 20%;">Amount (IDR)</th>
+          <th style="text-align: right; width: 20%;">Amount</th>
         </tr>
       </thead>
       <tbody>
@@ -213,7 +242,7 @@
           @foreach($reservation->folio->items as $item)
             @php $totalCharges += $item->amount; @endphp
             <tr>
-              <td>{{ $item->created_at->format('d/m/Y') }}</td>
+              <td>{{ $item->created_at->format('d M Y') }}</td>
               <td>{{ $item->item_type }}</td>
               <td>{{ $item->description }}</td>
               <td style="text-align: right;">Rp{{ number_format($item->amount, 0, ',', '.') }}</td>
@@ -227,14 +256,14 @@
       </tbody>
     </table>
 
-    <div class="ledger-title">Payment & Deposit Records</div>
-    <table class="ledger-table">
+    <div class="section-title">Payment & Deposit Records</div>
+    <table class="data-table">
       <thead>
         <tr>
           <th style="width: 15%;">Date</th>
           <th style="width: 25%;">Transaction Type</th>
-          <th>Payment Method / Details</th>
-          <th style="text-align: right; width: 20%;">Amount Paid (IDR)</th>
+          <th>Payment Method / Notes</th>
+          <th style="text-align: right; width: 20%;">Amount Paid</th>
         </tr>
       </thead>
       <tbody>
@@ -248,10 +277,10 @@
             else $totRef += $tx->amount;
           @endphp
           <tr>
-            <td>{{ \Carbon\Carbon::parse($tx->transaction_date)->format('d/m/Y') }}</td>
+            <td>{{ \Carbon\Carbon::parse($tx->transaction_date)->format('d M Y') }}</td>
             <td>{{ ucfirst($tx->type) }}</td>
-            <td>{{ $tx->payment_method }} - {{ $tx->notes ?? 'Checkout payment' }}</td>
-            <td style="text-align: right; font-weight: bold; color: {{ $tx->type === 'payment' ? 'green' : 'red' }}">
+            <td>{{ $tx->payment_method }} - {{ $tx->notes ?? 'Checkout settlement' }}</td>
+            <td style="text-align: right; font-weight: bold; color: {{ $tx->type === 'payment' ? '#1b5e20' : '#b71c1c' }}">
               {{ $tx->type === 'payment' ? '' : '-' }}Rp{{ number_format($tx->amount, 0, ',', '.') }}
             </td>
           </tr>
@@ -275,11 +304,11 @@
       </div>
       <div class="summary-row">
         <span>Total Net Paid:</span>
-        <span style="color: green;">Rp{{ number_format($netPayments, 0, ',', '.') }}</span>
+        <span style="color: #1b5e20; font-weight: bold;">Rp{{ number_format($netPayments, 0, ',', '.') }}</span>
       </div>
       <div class="summary-row total">
         <span>Outstanding Balance:</span>
-        <span style="color: {{ $outstanding > 0.01 ? 'red' : 'green' }};">
+        <span style="color: {{ $outstanding > 0.01 ? '#b71c1c' : '#1b5e20' }}; font-weight: bold;">
           @if($outstanding > 0.01)
             Rp{{ number_format($outstanding, 0, ',', '.') }}
           @else
@@ -290,20 +319,20 @@
     </div>
 
     <div class="signatures">
-      <div class="sig-box">
-        <p>Guest Signature</p>
+      <div class="sig-col">
+        <p class="sig-title">Guest Signature</p>
         <div class="sig-line"></div>
-        <p>{{ $reservation->guest->name }}</p>
+        <p class="sig-name">{{ $reservation->guest->name }}</p>
       </div>
-      <div class="sig-box">
-        <p>Authorized Cashier</p>
+      <div class="sig-col">
+        <p class="sig-title">Authorized Cashier</p>
         <div class="sig-line"></div>
-        <p>{{ auth()->user()->name }}</p>
+        <p class="sig-name">{{ auth()->user()->name }}</p>
       </div>
     </div>
 
     <div class="footer-note">
-      Thank you for staying at PPKD Hotel & Resort. Have a safe journey home!
+      Thank you for staying at PPKD Hotel. Have a safe journey home!
     </div>
   </div>
 

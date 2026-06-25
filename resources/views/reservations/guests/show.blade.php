@@ -13,14 +13,14 @@
     </div>
   </div>
   <div class="heading-actions">
-    <a href="{{ route('fo.guests.index') }}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left"></i> Back to Directory</a>
+    <a href="{{ route('fo.guests.index') }}" class="btn btn-light btn-tactile btn-sm"><i class="bi bi-arrow-left"></i> Back to Directory</a>
   </div>
 </div>
 
 <div class="row g-4">
   <!-- Profile Edit Form -->
   <div class="col-12 col-lg-5">
-    <div class="panel shadow-sm">
+    <div class="panel-premium shadow-sm">
       <div class="panel-header border-bottom pb-2 mb-3">
         <h2 class="h5 mb-0 section-title"><i class="bi bi-pencil-square text-primary"></i><span>Modify Identity Details</span></h2>
       </div>
@@ -78,8 +78,8 @@
             <input type="text" name="vehicle_no" id="vehicle_no" value="{{ old('vehicle_no', $guest->vehicle_no) }}" class="form-control form-control-sm">
           </div>
 
-          <div class="col-12 mt-3 pt-2 border-top">
-            <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-save"></i> Save Profile Modifications</button>
+          <div class="col-12 mt-3 pt-2 border-top" style="border-top-color: var(--admin-border) !important;">
+            <button type="submit" class="btn btn-primary btn-tactile btn-sm w-100"><i class="bi bi-save"></i> Save Profile Modifications</button>
           </div>
         </div>
       </form>
@@ -88,13 +88,13 @@
 
   <!-- Booking History logs -->
   <div class="col-12 col-lg-7">
-    <div class="panel shadow-sm h-100">
+    <div class="panel-premium shadow-sm h-100">
       <div class="panel-header border-bottom pb-2 mb-3">
         <h2 class="h5 mb-0 section-title"><i class="bi bi-clock-history text-primary"></i><span>Historical Room Reservations</span></h2>
       </div>
 
       <div class="table-responsive">
-        <table class="table align-middle table-sm small">
+        <table class="table table-hover align-middle table-sm small mb-0">
           <thead>
             <tr>
               <th>Res No.</th>
@@ -108,21 +108,21 @@
           <tbody>
             @forelse($guest->reservations as $res)
               <tr>
-                <td class="fw-bold">{{ $res->reservation_number }}</td>
-                <td>Room {{ $res->room->room_number }}</td>
+                <td class="fw-bold">#{{ $res->reservation_number }}</td>
+                <td><span class="badge badge-soft-secondary">Room {{ $res->room->room_number }}</span></td>
                 <td>
                   <span class="d-block text-muted">{{ $res->check_in_date }}</span>
                   <span class="d-block text-muted">to {{ $res->check_out_date }}</span>
                 </td>
-                <td>Rp{{ number_format($res->total_charge, 0, ',', '.') }}</td>
+                <td class="fw-semibold">Rp{{ number_format($res->total_charge, 0, ',', '.') }}</td>
                 <td>
                   @php
-                    $colors = ['RSV' => 'info', 'CI' => 'success', 'CO' => 'secondary', 'CAN' => 'danger', 'NS' => 'warning'];
+                    $colors = ['RSV' => 'badge-soft-info', 'CI' => 'badge-soft-success', 'CO' => 'badge-soft-secondary', 'CAN' => 'badge-soft-danger', 'NS' => 'badge-soft-warning'];
                   @endphp
-                  <span class="badge bg-{{ $colors[$res->status] ?? 'light' }}">{{ $res->status }}</span>
+                  <span class="badge {{ $colors[$res->status] ?? 'badge-soft-secondary' }}">{{ $res->status }}</span>
                 </td>
                 <td>
-                  <a href="{{ route('fo.reservations.show', $res->id) }}" class="btn btn-light btn-xs"><i class="bi bi-receipt"></i> Bill Ledger</a>
+                  <a href="{{ route('fo.reservations.show', $res->id) }}" class="btn btn-light btn-tactile btn-xs"><i class="bi bi-receipt"></i> Bill Ledger</a>
                 </td>
               </tr>
             @empty

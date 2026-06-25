@@ -5,21 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | PPKD HOTEL HMS</title>
 
+  <!-- Google Fonts Geist -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ asset('template/assets/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ asset('template/assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
   <link rel="stylesheet" href="{{ asset('template/assets/css/style.css') }}">
+  
+  <style>
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    }
+  </style>
 </head>
 
 <body class="auth-body">
   <button class="icon-button theme-toggle auth-theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
     <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
   </button>
-  
+
   <main class="auth-page">
     <section class="auth-card">
       <a class="auth-brand" href="#"><span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span><span><strong>PPKD HOTEL</strong><small>HMS Management Workspace</small></span></a>
       <div class="auth-visual"><img src="{{ asset('template/assets/images/png/dasher-ui-bootstrap-5.jpg') }}" alt="adminHMD dashboard interface"></div>
-      
+
       <form class="needs-validation" action="{{ route('login') }}" method="POST" novalidate>
         @csrf
         <div class="mb-4">
@@ -58,15 +69,15 @@
           <div class="invalid-feedback">Please enter your password.</div>
         </div>
 
-        <div class="form-check mb-4">
+        {{-- <div class="form-check mb-4">
           <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
           <label class="form-check-label" for="rememberMe">Remember me</label>
-        </div>
+        </div> --}}
 
-        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Sign In</button>
+        <button class="btn btn-primary btn-tactile w-100" type="submit"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Sign In</button>
       </form>
-      
-      <div class="auth-footer">New here? <a href="{{ route('register') }}">Create an account</a></div>
+
+      {{-- <div class="auth-footer">New here? <a href="{{ route('register') }}">Create an account</a></div> --}}
     </section>
   </main>
 

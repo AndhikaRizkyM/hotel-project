@@ -24,6 +24,8 @@ class Reservation extends Model
         'service_charge',
         'total_charge',
         'status',
+        'guarantee_type',
+        'guarantee_detail',
     ];
 
     protected $casts = [
@@ -69,6 +71,21 @@ class Reservation extends Model
     public function extrabedRequests(): HasMany
     {
         return $this->hasMany(ExtrabedRequest::class);
+    }
+
+    public function breakfastRecords(): HasMany
+    {
+        return $this->hasMany(BreakfastRecord::class);
+    }
+
+    public function damageReports(): HasMany
+    {
+        return $this->hasMany(DamageReport::class);
+    }
+
+    public function lostFoundReports(): HasMany
+    {
+        return $this->hasMany(LostFoundReport::class);
     }
 
     public function getStatusTextAttribute(): string

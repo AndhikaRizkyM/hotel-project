@@ -5,9 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register | PPKD HOTEL HMS</title>
 
+  <!-- Google Fonts Geist -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ asset('template/assets/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ asset('template/assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
   <link rel="stylesheet" href="{{ asset('template/assets/css/style.css') }}">
+  
+  <style>
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    }
+  </style>
 </head>
 
 <body class="auth-body">
@@ -74,7 +85,7 @@
           <div class="invalid-feedback">Please confirm your password.</div>
         </div>
 
-        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-person-plus" aria-hidden="true"></i> Create Account</button>
+        <button class="btn btn-primary btn-tactile w-100" type="submit"><i class="bi bi-person-plus" aria-hidden="true"></i> Create Account</button>
       </form>
       
       <div class="auth-footer">Already have an account? <a href="{{ route('login') }}">Sign in</a></div>

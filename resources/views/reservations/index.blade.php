@@ -13,12 +13,12 @@
     </div>
   </div>
   <div class="heading-actions">
-    <a href="{{ route('fo.reservations.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-journal-plus"></i> Walk-In Booking</a>
+    <a href="{{ route('fo.reservations.create') }}" class="btn btn-primary btn-tactile btn-sm"><i class="bi bi-journal-plus"></i> Walk-In Booking</a>
   </div>
 </div>
 
 <!-- Search & Filters Panel -->
-<div class="panel mb-4 shadow-sm">
+<div class="panel-premium mb-4 shadow-sm">
   <form method="GET" action="{{ route('fo.reservations.index') }}" class="row g-3">
     <div class="col-12 col-md-5">
       <label for="search" class="form-label small fw-bold">Search</label>
@@ -36,16 +36,16 @@
       </select>
     </div>
     <div class="col-12 col-md-3 d-flex align-items-end">
-      <button type="submit" class="btn btn-primary btn-sm me-2 w-100"><i class="bi bi-search"></i> Search</button>
-      <a href="{{ route('fo.reservations.index') }}" class="btn btn-outline-secondary btn-sm w-100"><i class="bi bi-arrow-clockwise"></i> Reset</a>
+      <button type="submit" class="btn btn-primary btn-tactile btn-sm me-2 w-100"><i class="bi bi-search"></i> Search</button>
+      <a href="{{ route('fo.reservations.index') }}" class="btn btn-outline-secondary btn-tactile btn-sm w-100"><i class="bi bi-arrow-clockwise"></i> Reset</a>
     </div>
   </form>
 </div>
 
 <!-- Reservation List Panel -->
-<div class="panel">
+<div class="panel-premium shadow-sm">
   <div class="table-responsive">
-    <table class="table align-middle">
+    <table class="table table-hover align-middle mb-0">
       <thead>
         <tr>
           <th>Res Number</th>
@@ -54,13 +54,13 @@
           <th>Check-in / Check-out</th>
           <th>Total Bill</th>
           <th>Status</th>
-          <th>Actions</th>
+          <th class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @forelse($reservations as $res)
           <tr>
-            <td class="fw-bold text-primary">{{ $res->reservation_number }}</td>
+            <td class="fw-bold text-primary">#{{ $res->reservation_number }}</td>
             <td>
               <strong>{{ $res->guest->name }}</strong>
               <br><span class="text-muted small"><i class="bi bi-telephone"></i> {{ $res->guest->phone }}</span>
@@ -70,21 +70,21 @@
               <br><span class="text-muted small">{{ $res->room->roomType->name }}</span>
             </td>
             <td>
-              <span class="badge bg-light text-dark">{{ $res->check_in_date }}</span>
-              <i class="bi bi-arrow-right mx-1 text-secondary"></i>
-              <span class="badge bg-light text-dark">{{ $res->check_out_date }}</span>
+              <span class="badge badge-soft-secondary">{{ $res->check_in_date }}</span>
+              <i class="bi bi-arrow-right mx-1 text-muted"></i>
+              <span class="badge badge-soft-secondary">{{ $res->check_out_date }}</span>
             </td>
-            <td>
+            <td class="fw-semibold">
               Rp{{ number_format($res->total_charge, 0, ',', '.') }}
             </td>
             <td>
               @php
                 $statusColors = [
-                  'RSV' => 'info',
-                  'CI'  => 'success',
-                  'CO'  => 'secondary',
-                  'CAN' => 'danger',
-                  'NS'  => 'warning'
+                  'RSV' => 'badge-soft-info',
+                  'CI'  => 'badge-soft-success',
+                  'CO'  => 'badge-soft-secondary',
+                  'CAN' => 'badge-soft-danger',
+                  'NS'  => 'badge-soft-warning'
                 ];
                 $statusNames = [
                   'RSV' => 'Reserved',
@@ -93,18 +93,18 @@
                   'CAN' => 'Cancelled',
                   'NS'  => 'No Show'
                 ];
-                $color = $statusColors[$res->status] ?? 'light';
+                $class = $statusColors[$res->status] ?? 'badge-soft-secondary';
                 $name = $statusNames[$res->status] ?? $res->status;
               @endphp
-              <span class="badge bg-{{ $color }}">{{ $name }}</span>
+              <span class="badge {{ $class }}">{{ $name }}</span>
             </td>
-            <td>
+            <td class="text-end">
               <div class="dropdown">
-                <button class="btn btn-outline-secondary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-secondary btn-tactile btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Actions
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" style="font-size: 0.85rem;">
-                  <li><a class="dropdown-item" href="{{ route('fo.reservations.show', $res->id) }}"><i class="bi bi-eye"></i> View Details & Folio</a></li>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="font-size: 0.85rem; border-radius: 12px; border: 1px solid var(--admin-border);">
+                  <li><a class="dropdown-item" href="{{ route('fo.reservations.show', $res->id) }}"><i class="bi bi-eye text-primary"></i> View Details & Folio</a></li>
                   
                   @if($res->status === 'RSV')
                     <li><hr class="dropdown-divider"></li>

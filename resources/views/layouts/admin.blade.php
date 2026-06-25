@@ -7,10 +7,10 @@
   <meta name="description" content="Hotel Management System | PPKD HOTEL">
   <title>@yield('title', 'Dashboard') | PPKD HOTEL</title>
 
-  <!-- Google Fonts Poppins -->
+  <!-- Google Fonts Geist -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ asset('template/assets/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ asset('template/assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
@@ -18,24 +18,120 @@
   
   <style>
     body {
-      font-family: 'Poppins', sans-serif !important;
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      background-color: #f8fafc;
     }
     .brand-title {
       font-weight: 700;
-      color: #0ea5e9;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .brand-subtitle {
-      font-size: 0.75rem;
-      letter-spacing: 1px;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      color: #94a3b8;
     }
-    .sidebar-user {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 15px;
+    
+    /* Modernized Sidebar Section Headers */
+    .sidebar-section-header {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: var(--admin-sidebar-muted) !important;
+      padding: 1.25rem 1.15rem 0.4rem;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    /* Add active states for submenu / links */
+    .sidebar-section-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Sleek Sidebar Navigation links */
+    .sidebar-nav .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-height: 44px;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      color: var(--admin-sidebar-text) !important;
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-nav .nav-link:hover {
+      background: rgba(255, 255, 255, 0.03) !important;
+      color: var(--admin-sidebar-text-strong) !important;
+      transform: translateX(4px);
+    }
     .sidebar-nav .nav-link.active {
-      background-color: #1e3a8a !important;
-      color: #fff !important;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(99, 102, 241, 0.12)) !important;
+      color: #38bdf8 !important;
+      font-weight: 600;
+      border-left: 3px solid #0ea5e9;
+      border-radius: 0 8px 8px 0;
+      box-shadow: inset 5px 0 15px rgba(14, 165, 233, 0.05);
+    }
+    .sidebar-nav .nav-link.active .nav-icon {
+      background: rgba(14, 165, 233, 0.2) !important;
+      color: #38bdf8 !important;
+    }
+    .nav-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #64748b;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    /* Redesigned Profile Capsule */
+    .sidebar-user {
+      margin: auto 1rem 1rem;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02) !important;
+      backdrop-filter: blur(10px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sidebar-user-avatar {
+      border: 2px solid #0ea5e9;
+      box-shadow: 0 0 12px rgba(14, 165, 233, 0.25);
+      padding: 2px;
+      background: #0f172a;
+    }
+    .sidebar-user strong {
+      color: #f1f5f9;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .sidebar-user small {
+      color: #64748b;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-inline: 1rem;
+      padding: 0.85rem 0;
+      color: #475569;
+      font-size: 0.75rem;
     }
     @media print {
       .admin-sidebar, .admin-navbar, .admin-footer, .heading-actions, .btn {
@@ -56,7 +152,7 @@
 
 <body>
   <div class="admin-shell">
-    <div class="sidebar-backdrop" data-sidebar-close></div>
+    <div class="sidebar-backdrop" data-sidebar-close onclick="document.body.classList.remove('sidebar-open')"></div>
 
     @include('layouts.partials.sidebar')
 

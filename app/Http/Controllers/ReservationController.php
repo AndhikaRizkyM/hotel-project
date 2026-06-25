@@ -79,43 +79,56 @@ class ReservationController extends Controller
         if ($request->filled('room_id')) {
             $preselectedRoom = Room::with('roomType')->find($request->room_id);
         }
-        return view('reservations.create', compact('rooms', 'preselectedRoom'));
+        $guests = Guest::orderBy('name')->get();
+        return view('reservations.create', compact('rooms', 'preselectedRoom', 'guests'));
     }
 
     // 4. Store Reservation
     public function store(Request $request)
     {
-        $request->validate([
-            // Guest Details
-            'name' => ['required', 'string', 'max:255'],
-            'id_number' => ['required', 'string'],
-            'birth_date' => ['required', 'date'],
-            'gender' => ['required', 'string'],
-            'address' => ['nullable', 'string'],
-            'country' => ['required', 'string'],
-            'phone' => ['required', 'string'],
-            'email' => ['nullable', 'email'],
-            'vehicle_no' => ['nullable', 'string'],
-            // Booking details
-            'room_id' => ['required', 'exists:rooms,id'],
-            'check_in_date' => ['required', 'date', 'after_or_equal:today'],
-            'check_out_date' => ['required', 'date', 'after:check_in_date'],
-        ]);
+        $guestMode = $request->input('guest_mode', 'new');
 
-        // Find or create Guest profile
-        $guest = Guest::updateOrCreate(
-            ['id_number' => $request->id_number],
-            [
-                'name' => $request->name,
-                'birth_date' => $request->birth_date,
-                'gender' => $request->gender,
-                'address' => $request->address,
-                'country' => $request->country,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'vehicle_no' => $request->vehicle_no,
-            ]
-        );
+        if ($guestMode === 'existing') {
+            $request->validate([
+                'guest_id' => ['required', 'exists:guests,id'],
+                'room_id' => ['required', 'exists:rooms,id'],
+                'check_in_date' => ['required', 'date', 'after_or_equal:today'],
+                'check_out_date' => ['required', 'date', 'after:check_in_date'],
+            ]);
+            $guest = Guest::findOrFail($request->guest_id);
+        } else {
+            $request->validate([
+                // Guest Details
+                'name' => ['required', 'string', 'max:255'],
+                'id_number' => ['required', 'string'],
+                'birth_date' => ['required', 'date'],
+                'gender' => ['required', 'string'],
+                'address' => ['nullable', 'string'],
+                'country' => ['required', 'string'],
+                'phone' => ['required', 'string'],
+                'email' => ['nullable', 'email'],
+                'vehicle_no' => ['nullable', 'string'],
+                // Booking details
+                'room_id' => ['required', 'exists:rooms,id'],
+                'check_in_date' => ['required', 'date', 'after_or_equal:today'],
+                'check_out_date' => ['required', 'date', 'after:check_in_date'],
+            ]);
+
+            // Find or create Guest profile
+            $guest = Guest::updateOrCreate(
+                ['id_number' => $request->id_number],
+                [
+                    'name' => $request->name,
+                    'birth_date' => $request->birth_date,
+                    'gender' => $request->gender,
+                    'address' => $request->address,
+                    'country' => $request->country,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'vehicle_no' => $request->vehicle_no,
+                ]
+            );
+        }
 
         $room = Room::findOrFail($request->room_id);
         if ($room->status !== 'A') {
@@ -168,12 +181,17 @@ class ReservationController extends Controller
         $fbMenus = FbMenu::where('is_active', true)->get();
         // Laundry options
         $laundryServices = LaundryService::where('is_active', true)->get();
+
+        // Calculate initial reservation totals for check-in settlement
+        $totalPaid = $reservation->deposits->where('type', 'payment')->sum('amount') 
+                     - $reservation->deposits->where('type', 'refund')->sum('amount');
+        $outstanding = $reservation->total_charge - $totalPaid;
         
-        return view('reservations.show', compact('reservation', 'fbMenus', 'laundryServices'));
+        return view('reservations.show', compact('reservation', 'fbMenus', 'laundryServices', 'totalPaid', 'outstanding'));
     }
 
     // 6. Check In Process
-    public function checkIn($id)
+    public function checkIn(Request $request, $id)
     {
         $reservation = Reservation::with('room')->findOrFail($id);
         
@@ -181,8 +199,70 @@ class ReservationController extends Controller
             return back()->with('error', 'Only reserved bookings can be checked in.');
         }
 
-        // Change statuses
-        $reservation->update(['status' => 'CI']);
+        // Validate guarantee options and settlement amount
+        $request->validate([
+            'guarantee_type' => ['required', 'string', 'in:Cash,Identity Card'],
+            'guarantee_card_number' => ['required_if:guarantee_type,Identity Card', 'nullable', 'string', 'max:255'],
+            'guarantee_cash_amount' => ['required_if:guarantee_type,Cash', 'nullable', 'numeric', 'min:0'],
+            'amount' => ['nullable', 'numeric', 'min:0'],
+            'payment_method' => ['required_if:amount,>0', 'nullable', 'string'],
+        ]);
+
+        $totalPaid = $reservation->deposits()->where('type', 'payment')->sum('amount') 
+                     - $reservation->deposits()->where('type', 'refund')->sum('amount');
+        $outstanding = $reservation->total_charge - $totalPaid;
+
+        // Process outstanding payment settlement if amount is provided
+        if ($request->filled('amount') && $request->amount > 0) {
+            if ($request->amount < $outstanding) {
+                return back()->with('error', 'Check-in failed: Full settlement of outstanding reservation charges (Rp' . number_format($outstanding, 0, ',', '.') . ') is required to check in.');
+            }
+
+            Deposit::create([
+                'reservation_id' => $reservation->id,
+                'amount' => $request->amount,
+                'payment_method' => $request->payment_method,
+                'type' => 'payment',
+                'transaction_date' => now(),
+                'notes' => 'Reservation check-in settlement payment',
+            ]);
+
+            $totalPaid += $request->amount;
+            $outstanding -= $request->amount;
+        }
+
+        // Enforce that reservation charge must be paid in full to check in
+        if ($totalPaid < $reservation->total_charge) {
+            return back()->with('error', 'Check-in failed: Outstanding balance is not fully settled. Required: Rp' . number_format($reservation->total_charge, 0, ',', '.') . ', Currently paid: Rp' . number_format($totalPaid, 0, ',', '.'));
+        }
+
+        // Determine guarantee detail and process cash deposit if applicable
+        $guaranteeDetail = '';
+        if ($request->guarantee_type === 'Identity Card') {
+            $guaranteeDetail = 'ID Card: ' . $request->guarantee_card_number;
+        } elseif ($request->guarantee_type === 'Cash') {
+            $cashAmount = $request->guarantee_cash_amount;
+            $guaranteeDetail = 'Cash Deposit: Rp' . number_format($cashAmount, 0, ',', '.');
+
+            // Log security deposit to payments ledger
+            if ($cashAmount > 0) {
+                Deposit::create([
+                    'reservation_id' => $reservation->id,
+                    'amount' => $cashAmount,
+                    'payment_method' => 'Cash',
+                    'type' => 'payment',
+                    'transaction_date' => now(),
+                    'notes' => 'Check-in security deposit (Cash Guarantee)',
+                ]);
+            }
+        }
+
+        // Change statuses and save guarantee
+        $reservation->update([
+            'status' => 'CI',
+            'guarantee_type' => $request->guarantee_type,
+            'guarantee_detail' => $guaranteeDetail,
+        ]);
         $reservation->room->update(['status' => 'O']);
 
         // Create Guest Folio
@@ -216,8 +296,133 @@ class ReservationController extends Controller
             'amount' => $reservation->service_charge,
         ]);
 
+        // Calculate Early Check-in Charge (Rp100.000 / hour before 14:00)
+        $standardCheckInTime = Carbon::parse($reservation->check_in_date->format('Y-m-d') . ' 14:00:00');
+        $actualCheckInTime = now();
+        if ($actualCheckInTime->isBefore($standardCheckInTime)) {
+            $diffInMinutes = $actualCheckInTime->diffInMinutes($standardCheckInTime);
+            $hoursEarly = (int) ceil($diffInMinutes / 60);
+            if ($hoursEarly > 0) {
+                $earlyCharge = $hoursEarly * 100000;
+                GuestFolioItem::create([
+                    'guest_folio_id' => $folio->id,
+                    'item_type' => 'Miscellaneous Charge',
+                    'description' => "Early Check-in Charge ({$hoursEarly} Hours @ Rp100.000)",
+                    'amount' => $earlyCharge,
+                ]);
+            }
+        }
+
         return redirect()->route('fo.reservations.show', $reservation->id)
             ->with('success', 'Guest checked in successfully! Guest Folio created.');
+    }
+
+    // 6b. Request Room Inspection
+    public function requestInspection($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        if ($reservation->status !== 'CI') {
+            return back()->with('error', 'Inspection can only be requested for checked-in reservations.');
+        }
+
+        // Check if there is already an active inspection task
+        $existingTask = HousekeepingTask::where('reservation_id', $reservation->id)
+            ->where('task_type', 'inspection')
+            ->where('status', '!=', 'completed')
+            ->first();
+
+        if ($existingTask) {
+            return back()->with('error', 'An active room inspection is already in progress.');
+        }
+
+        // Create the task
+        HousekeepingTask::create([
+            'room_id' => $reservation->room_id,
+            'reservation_id' => $reservation->id,
+            'task_type' => 'inspection',
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Room inspection requested successfully. Housekeeping has been notified.');
+    }
+
+    // 6c. Process Damage Issue from Inspection (Front Office Review)
+    public function processDamageIssue(Request $request, $id, $damageId, $action)
+    {
+        $reservation = Reservation::with('folio')->findOrFail($id);
+        $damageReport = DamageReport::where('reservation_id', $reservation->id)->findOrFail($damageId);
+
+        if ($damageReport->status !== 'pending') {
+            return back()->with('error', 'This damage issue has already been processed.');
+        }
+
+        if ($action === 'charge') {
+            $damageReport->update([
+                'status' => 'repaired', // Set as processed
+                'is_charged_to_folio' => true,
+            ]);
+
+            // Add charge to guest folio
+            GuestFolioItem::create([
+                'guest_folio_id' => $reservation->folio->id,
+                'item_type' => 'Damage Charge',
+                'description' => "Room Damage Fee - Room {$reservation->room->room_number} ({$damageReport->item_name})",
+                'amount' => $damageReport->estimated_cost,
+            ]);
+
+            return back()->with('success', 'Damage charge of Rp' . number_format($damageReport->estimated_cost, 0, ',', '.') . ' has been added to folio.');
+        } elseif ($action === 'waive') {
+            $damageReport->update([
+                'status' => 'repaired', // Set as processed
+                'is_charged_to_folio' => false,
+            ]);
+
+            return back()->with('success', 'Damage charge has been waived.');
+        }
+
+        return back()->with('error', 'Invalid action.');
+    }
+
+    // 6d. Process Lost Found Issue from Inspection (Front Office Review)
+    public function processLostIssue(Request $request, $id, $lostId, $action)
+    {
+        $reservation = Reservation::with('folio')->findOrFail($id);
+        $lostReport = LostFoundReport::where('reservation_id', $reservation->id)->findOrFail($lostId);
+
+        if ($lostReport->status !== 'lost') {
+            return back()->with('error', 'This lost item issue has already been processed.');
+        }
+
+        if ($action === 'charge') {
+            $request->validate([
+                'charge_amount' => ['required', 'numeric', 'min:0']
+            ]);
+
+            $lostReport->update([
+                'status' => 'claimed', // Set as processed
+                'claim_date' => now(),
+            ]);
+
+            // Add charge to guest folio
+            GuestFolioItem::create([
+                'guest_folio_id' => $reservation->folio->id,
+                'item_type' => 'Lost Item Charge',
+                'description' => "Lost Item Penalty - Room {$reservation->room->room_number} ({$lostReport->item_description})",
+                'amount' => $request->charge_amount,
+            ]);
+
+            return back()->with('success', 'Lost item charge of Rp' . number_format($request->charge_amount, 0, ',', '.') . ' has been added to folio.');
+        } elseif ($action === 'waive') {
+            $lostReport->update([
+                'status' => 'claimed', // Set as processed
+                'claim_date' => now(),
+            ]);
+
+            return back()->with('success', 'Lost item charge has been waived.');
+        }
+
+        return back()->with('error', 'Invalid action.');
     }
 
     // 7. Check Out Process
@@ -227,6 +432,47 @@ class ReservationController extends Controller
         
         if ($reservation->status !== 'CI') {
             return back()->with('error', 'Only checked in guests can be checked out.');
+        }
+
+        // Check if there is an inspection task and if it is completed
+        $inspectionTask = HousekeepingTask::where('reservation_id', $reservation->id)
+            ->where('task_type', 'inspection')
+            ->latest()
+            ->first();
+        if ($inspectionTask && $inspectionTask->status !== 'completed') {
+            return back()->with('error', 'Check-out failed: Room inspection has not been completed.');
+        }
+
+        // Check for pending damages or lost items
+        $pendingDamages = DamageReport::where('reservation_id', $reservation->id)->where('status', 'pending')->count();
+        $pendingLost = LostFoundReport::where('reservation_id', $reservation->id)->where('status', 'lost')->count();
+        if ($pendingDamages > 0 || $pendingLost > 0) {
+            return back()->with('error', 'Check-out failed: There are still damage or lost item reports that have not been processed by FO.');
+        }
+
+        // Post Late Check-out Charge if applicable (Rp100.000 / hour after 12:00)
+        $standardCheckOutTime = Carbon::parse($reservation->check_out_date->format('Y-m-d') . ' 12:00:00');
+        $actualCheckOutTime = now();
+        if ($actualCheckOutTime->isAfter($standardCheckOutTime)) {
+            $diffInMinutes = $standardCheckOutTime->diffInMinutes($actualCheckOutTime);
+            $hoursLate = (int) ceil($diffInMinutes / 60);
+            if ($hoursLate > 0) {
+                $lateCharge = $hoursLate * 100000;
+                
+                // Avoid duplicate late charge posting on page reload / repeat submit
+                $hasLateCharge = GuestFolioItem::where('guest_folio_id', $reservation->folio->id)
+                    ->where('description', 'like', 'Late Check-out Charge%')
+                    ->exists();
+
+                if (!$hasLateCharge) {
+                    GuestFolioItem::create([
+                        'guest_folio_id' => $reservation->folio->id,
+                        'item_type' => 'Miscellaneous Charge',
+                        'description' => "Late Check-out Charge ({$hoursLate} Hours @ Rp100.000)",
+                        'amount' => $lateCharge,
+                    ]);
+                }
+            }
         }
 
         // Sum up folio charges
@@ -456,6 +702,33 @@ class ReservationController extends Controller
         $guest->update($request->all());
 
         return redirect()->route('fo.guests.show', $guest->id)->with('success', 'Guest profile updated successfully.');
+    }
+
+    public function guestsStore(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'id_number' => ['required', 'string', 'max:255', 'unique:guests,id_number'],
+            'birth_date' => ['required', 'date'],
+            'gender' => ['required', 'string', 'in:Male,Female'],
+            'phone' => ['required', 'string'],
+            'email' => ['nullable', 'email'],
+            'address' => ['nullable', 'string'],
+            'country' => ['required', 'string'],
+            'vehicle_no' => ['nullable', 'string'],
+        ]);
+
+        Guest::create($request->all());
+
+        return redirect()->route('fo.guests.index')->with('success', 'New guest profile has been successfully added.');
+    }
+
+    public function guestsDestroy($id)
+    {
+        $guest = Guest::findOrFail($id);
+        $guest->delete();
+
+        return redirect()->route('fo.guests.index')->with('success', 'Guest profile has been successfully deleted.');
     }
 
     // ==========================================

@@ -18,7 +18,56 @@ class FbController extends Controller
             ->where('status', 'CI')
             ->get();
 
+        // Load or create breakfast records for today
+        foreach ($guests as $guest) {
+            $record = \App\Models\BreakfastRecord::firstOrCreate(
+                [
+                    'reservation_id' => $guest->id,
+                    'date' => $date,
+                ],
+                [
+                    'status' => 'Pending',
+                    'pax' => $guest->room->roomType->capacity,
+                    'timeline' => [
+                        [
+                            'status' => 'Pending',
+                            'time' => now()->timezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                            'user' => auth()->user()->name,
+                        ]
+                    ]
+                ]
+            );
+            $guest->breakfast_record = $record;
+        }
+
         return view('fb.breakfast', compact('guests', 'date'));
+    }
+
+    public function updateBreakfastStatus(Request $request, $id)
+    {
+        $record = \App\Models\BreakfastRecord::findOrFail($id);
+
+        $request->validate([
+            'status' => ['required', 'string', 'in:Pending,Preparing,Delivered,Skipped'],
+            'notes' => ['nullable', 'string']
+        ]);
+
+        $newStatus = $request->status;
+
+        $timeline = $record->timeline ?? [];
+        $timeline[] = [
+            'status' => $newStatus,
+            'time' => now()->timezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+            'user' => auth()->user()->name,
+        ];
+
+        $record->update([
+            'status' => $newStatus,
+            'notes' => $request->notes,
+            'timeline' => $timeline,
+        ]);
+
+        return back()->with('success', "Breakfast status updated to {$newStatus}.");
     }
 
     public function ordersIndex()

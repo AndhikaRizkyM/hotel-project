@@ -13,6 +13,7 @@ class LostFoundReport extends Model
     protected $fillable = [
         'room_id',
         'reported_by_user_id',
+        'reservation_id',
         'item_description',
         'location_found',
         'guest_name',
@@ -28,6 +29,11 @@ class LostFoundReport extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 
     public function reportedBy(): BelongsTo

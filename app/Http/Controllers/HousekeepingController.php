@@ -117,18 +117,48 @@ class HousekeepingController extends Controller
             'housekeeping_task_id' => ['required', 'exists:housekeeping_tasks,id'],
             'result' => ['required', 'string', 'in:passed,failed'],
             'notes' => ['nullable', 'string'],
+            
+            // Optional integrated issues fields
+            'report_damage' => ['nullable', 'boolean'],
+            'damage_item_name' => ['required_if:report_damage,1', 'nullable', 'string', 'max:255'],
+            'damage_description' => ['required_if:report_damage,1', 'nullable', 'string'],
+            'damage_estimated_cost' => ['required_if:report_damage,1', 'nullable', 'numeric', 'min:0'],
+            'damage_is_charged_to_folio' => ['nullable', 'boolean'],
+
+            'report_lost' => ['nullable', 'boolean'],
+            'lost_item_description' => ['required_if:report_lost,1', 'nullable', 'string'],
+            'lost_location_found' => ['required_if:report_lost,1', 'nullable', 'string', 'max:255'],
+            'lost_guest_name' => ['nullable', 'string', 'max:255'],
+            'lost_contact_number' => ['nullable', 'string', 'max:255'],
+
+            'report_maintenance' => ['nullable', 'boolean'],
+            'maintenance_description' => ['required_if:report_maintenance,1', 'nullable', 'string'],
+            'maintenance_priority' => ['required_if:report_maintenance,1', 'nullable', 'string', 'in:low,medium,high'],
+            'maintenance_estimated_cost' => ['required_if:report_maintenance,1', 'nullable', 'numeric', 'min:0'],
         ]);
 
-        $task = HousekeepingTask::with('room')->findOrFail($request->housekeeping_task_id);
+        $task = HousekeepingTask::with(['room', 'reservation'])->findOrFail($request->housekeeping_task_id);
 
-        if ($request->result === 'passed') {
-            $statusAfter = 'Available';
-            $task->update(['status' => 'completed']);
-            $task->room->update(['status' => 'A']); // Available
+        if ($task->task_type === 'inspection') {
+            // For pre-checkout room inspection, guest is still checked-in, so room remains Occupied (O)
+            $statusAfter = 'Occupied';
+            if ($request->result === 'passed') {
+                $task->update(['status' => 'completed']);
+            } else {
+                $task->update(['status' => 'pending']); // retry inspection or trigger task completion later
+            }
+            $task->room->update(['status' => 'O']);
         } else {
-            $statusAfter = 'Dirty';
-            $task->update(['status' => 'pending']); // return to pending for re-cleaning
-            $task->room->update(['status' => 'D']); // Dirty
+            // Regular daily cleaning or checkout cleaning inspections
+            if ($request->result === 'passed') {
+                $statusAfter = 'Available';
+                $task->update(['status' => 'completed']);
+                $task->room->update(['status' => 'A']); // Available
+            } else {
+                $statusAfter = 'Dirty';
+                $task->update(['status' => 'pending']); // return to pending for re-cleaning
+                $task->room->update(['status' => 'D']); // Dirty
+            }
         }
 
         RoomInspection::create([
@@ -139,7 +169,70 @@ class HousekeepingController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return redirect()->route('hk.tasks', ['tab' => 'inspections'])->with('success', 'Inspection logged successfully.');
+        // Find active reservation for guest details & folio charging
+        $reservation = $task->reservation;
+        if (!$reservation) {
+            $reservation = Reservation::where('room_id', $task->room_id)->where('status', 'CI')->first();
+        }
+
+        // 1. Process damage report if checked
+        if ($request->report_damage) {
+            $guestId = $reservation ? $reservation->guest_id : null;
+            $resId = $reservation ? $reservation->id : null;
+            $chargeFolio = $request->has('damage_is_charged_to_folio') && $request->damage_is_charged_to_folio;
+            
+            if ($chargeFolio && $reservation && $reservation->folio) {
+                GuestFolioItem::create([
+                    'guest_folio_id' => $reservation->folio->id,
+                    'item_type' => 'Damage Charge',
+                    'description' => "Room Damage Fee - Room {$task->room->room_number} ({$request->damage_item_name})",
+                    'amount' => $request->damage_estimated_cost,
+                ]);
+            }
+            
+            DamageReport::create([
+                'room_id' => $task->room_id,
+                'reported_by_user_id' => auth()->id(),
+                'guest_id' => $guestId,
+                'reservation_id' => $resId,
+                'item_name' => $request->damage_item_name,
+                'description' => $request->damage_description,
+                'estimated_cost' => $request->damage_estimated_cost,
+                'is_charged_to_folio' => $chargeFolio,
+                'status' => 'pending',
+            ]);
+        }
+
+        // 2. Process lost & found if checked
+        if ($request->report_lost) {
+            $resId = $reservation ? $reservation->id : null;
+            LostFoundReport::create([
+                'room_id' => $task->room_id,
+                'reported_by_user_id' => auth()->id(),
+                'reservation_id' => $resId,
+                'item_description' => $request->lost_item_description,
+                'location_found' => $request->lost_location_found,
+                'guest_name' => $request->lost_guest_name,
+                'contact_number' => $request->lost_contact_number,
+                'status' => 'lost',
+            ]);
+        }
+
+        // 3. Process maintenance if checked
+        if ($request->report_maintenance) {
+            MaintenanceRequest::create([
+                'room_id' => $task->room_id,
+                'reported_by_user_id' => auth()->id(),
+                'description' => $request->maintenance_description,
+                'priority' => $request->maintenance_priority,
+                'estimated_cost' => $request->maintenance_estimated_cost,
+                'status' => 'pending',
+            ]);
+            // Update room status to 'M' (Maintenance)
+            $task->room->update(['status' => 'M']);
+        }
+
+        return redirect()->route('hk.tasks', ['tab' => 'inspections'])->with('success', 'Inspection and reported issues logged successfully.');
     }
 
     // 3. Damage Reports
@@ -191,6 +284,7 @@ class HousekeepingController extends Controller
             'room_id' => $request->room_id,
             'reported_by_user_id' => auth()->id(),
             'guest_id' => $guestId,
+            'reservation_id' => $request->reservation_id,
             'item_name' => $request->item_name,
             'description' => $request->description,
             'estimated_cost' => $request->estimated_cost,
@@ -221,11 +315,13 @@ class HousekeepingController extends Controller
             'location_found' => ['nullable', 'string', 'max:255'],
             'guest_name' => ['nullable', 'string', 'max:255'],
             'contact_number' => ['nullable', 'string', 'max:255'],
+            'reservation_id' => ['nullable', 'exists:reservations,id'],
         ]);
 
         LostFoundReport::create([
             'room_id' => $request->room_id,
             'reported_by_user_id' => auth()->id(),
+            'reservation_id' => $request->reservation_id,
             'item_description' => $request->item_description,
             'location_found' => $request->location_found,
             'guest_name' => $request->guest_name,

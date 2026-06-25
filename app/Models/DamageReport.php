@@ -14,6 +14,7 @@ class DamageReport extends Model
         'room_id',
         'reported_by_user_id',
         'guest_id',
+        'reservation_id',
         'item_name',
         'description',
         'estimated_cost',
@@ -29,6 +30,11 @@ class DamageReport extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 
     public function reportedBy(): BelongsTo

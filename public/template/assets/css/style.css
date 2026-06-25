@@ -33,7 +33,7 @@ body {
   margin: 0;
   background: linear-gradient(180deg, #f8fbff 0%, var(--admin-bg) 42%, #eef4fa 100%);
   color: var(--admin-text);
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -1557,9 +1557,9 @@ html:not([data-theme="dark"]) {
   --admin-sidebar: #ffffff;
   --admin-sidebar-soft: #eef4ff;
   --admin-sidebar-border: #dbe4ef;
-  --admin-sidebar-text: #475569;
+  --admin-sidebar-text: #1e293b;
   --admin-sidebar-text-strong: #0f172a;
-  --admin-sidebar-muted: #64748b;
+  --admin-sidebar-muted: #475569;
   --admin-sidebar-icon-bg: #eaf2ff;
   --admin-sidebar-icon: #2563eb;
   --admin-sidebar-shadow: 18px 0 42px rgba(15, 23, 42, 0.08);
@@ -1567,9 +1567,9 @@ html:not([data-theme="dark"]) {
 
 html[data-theme="dark"] {
   --admin-sidebar-border: rgba(255, 255, 255, 0.08);
-  --admin-sidebar-text: #d1d5db;
+  --admin-sidebar-text: #f1f5f9;
   --admin-sidebar-text-strong: #ffffff;
-  --admin-sidebar-muted: #9ca3af;
+  --admin-sidebar-muted: #94a3b8;
   --admin-sidebar-icon-bg: rgba(255, 255, 255, 0.08);
   --admin-sidebar-icon: #bfdbfe;
   --admin-sidebar-shadow: 18px 0 42px rgba(0, 0, 0, 0.34);
@@ -1706,3 +1706,207 @@ html[data-theme="dark"] .form-select:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--admin-muted);
 }
+
+/* --- Modern Interactive Enhancements --- */
+
+/* Breathing pulse animation for indicators */
+@keyframes breathing-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.indicator-online {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  animation: breathing-pulse 2s infinite;
+}
+
+/* Glassmorphic panels */
+.panel-premium {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.03) !important;
+}
+
+html[data-theme="dark"] .panel-premium {
+  background: rgba(24, 34, 53, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.24) !important;
+}
+
+.panel-premium:hover {
+  border-color: rgba(37, 99, 235, 0.15) !important;
+  box-shadow: 0 12px 42px 0 rgba(15, 23, 42, 0.06) !important;
+  transform: translateY(-2px);
+}
+
+html[data-theme="dark"] .panel-premium:hover {
+  border-color: rgba(96, 165, 250, 0.15) !important;
+}
+
+/* Tactile scale transitions */
+.btn-tactile {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.btn-tactile:hover {
+  transform: translateY(-1px);
+}
+.btn-tactile:active {
+  transform: scale(0.96) !important;
+}
+
+/* Bento card styling */
+.bento-card {
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 1.25rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bento-card:hover {
+  border-color: var(--admin-primary);
+  box-shadow: var(--admin-shadow-lg);
+  transform: translateY(-3px);
+}
+
+/* Room Map custom visualizer */
+.room-status-badge {
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.room-bento-card {
+  position: relative;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 145px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.room-bento-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--admin-shadow-lg);
+  border-color: var(--room-theme-color, var(--admin-border));
+}
+
+.room-bento-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--room-theme-color, var(--admin-border));
+}
+
+.room-bento-card.room-A { --room-theme-color: #10b981; } /* Available - Green */
+.room-bento-card.room-O { --room-theme-color: #3b82f6; } /* Occupied - Blue */
+.room-bento-card.room-R { --room-theme-color: #06b6d4; } /* Reserved - Cyan */
+.room-bento-card.room-D { --room-theme-color: #ef4444; } /* Dirty - Red */
+.room-bento-card.room-C { --room-theme-color: #f59e0b; } /* Cleaning - Amber */
+.room-bento-card.room-M { --room-theme-color: #6b7280; } /* Maintenance - Gray */
+
+.room-bento-actions {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+
+.room-bento-card:hover .room-bento-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Kanban columns for Kitchen operations */
+.fb-kanban-board {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.fb-kanban-col {
+  flex: 1;
+  min-width: 320px;
+  background: var(--admin-surface-soft);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.fb-kanban-col:hover {
+  border-color: var(--admin-primary);
+}
+
+.fb-order-card {
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--admin-shadow-sm);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fb-order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow);
+  border-color: var(--admin-primary);
+}
+
+/* Timeline tracking visualizer for breakfast */
+.breakfast-timeline-item {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--admin-border);
+  padding-bottom: 8px;
+}
+
+.breakfast-timeline-item::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--admin-muted);
+  border-radius: 50%;
+}
+
+.breakfast-timeline-item.active-step::after {
+  background-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.breakfast-timeline-item.done-step::after {
+  background-color: #10b981;
+}
+
+.breakfast-timeline-item.done-step {
+  border-left-color: #10b981;
+}
+
